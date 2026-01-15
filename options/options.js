@@ -18,6 +18,7 @@ let bypassListField, pacScriptField, proxyColorField;
 let serverFields, pacScriptFieldContainer;
 let addProxyBtn, cancelFormBtn, cancelBtn, testBtn, deleteBtn, exportBtn, importBtn, importFile;
 let formTitle, statisticsContainer, toast, loadTemplateBtn, versionInfo, clearStatisticsBtn;
+let confirmModal, confirmModalTitle, confirmModalMessage, confirmModalCancel, confirmModalConfirm;
 
 // State
 let proxyConfigs = [];
@@ -66,6 +67,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadTemplateBtn = document.getElementById('loadTemplateBtn');
   versionInfo = document.getElementById('versionInfo');
   clearStatisticsBtn = document.getElementById('clearStatisticsBtn');
+  confirmModal = document.getElementById('confirmModal');
+  confirmModalTitle = document.getElementById('confirmModalTitle');
+  confirmModalMessage = document.getElementById('confirmModalMessage');
+  confirmModalCancel = document.getElementById('confirmModalCancel');
+  confirmModalConfirm = document.getElementById('confirmModalConfirm');
 
   // Display version
   displayVersion();
@@ -83,6 +89,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   importFile.addEventListener('change', handleImport);
   loadTemplateBtn.addEventListener('click', loadPACTemplate);
   clearStatisticsBtn.addEventListener('click', handleClearStatistics);
+  confirmModalCancel.addEventListener('click', hideConfirmModal);
+  confirmModal.addEventListener('click', (e) => {
+    if (e.target === confirmModal) {
+      hideConfirmModal();
+    }
+  });
 
   // Listen for storage changes
   chrome.storage.onChanged.addListener(handleStorageChange);
@@ -455,34 +467,32 @@ async function handleDeleteCurrent() {
  * Handle delete configuration
  */
 async function handleDelete(config) {
-  if (!confirm(`${t('msgDeleteConfirm')} "${config.name}"?`)) {
-    return;
-  }
+  showConfirmModal(`${t('msgDeleteConfirm')} "${config.name}"?`, async () => {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: MESSAGE_TYPES.DELETE_CONFIG,
+        data: { configId: config.id }
+      });
 
-  try {
-    const response = await chrome.runtime.sendMessage({
-      type: MESSAGE_TYPES.DELETE_CONFIG,
-      data: { configId: config.id }
-    });
-
-    if (response.success) {
-      showToast(t('msgConfigDeleted'), 'success');
-      
-      // If deleted config was selected, clear selection
-      if (selectedConfigId === config.id) {
-        selectedConfigId = null;
-        formSection.style.display = 'none';
-        statisticsSection.style.display = 'block';
+      if (response.success) {
+        showToast(t('msgConfigDeleted'), 'success');
+        
+        // If deleted config was selected, clear selection
+        if (selectedConfigId === config.id) {
+          selectedConfigId = null;
+          formSection.style.display = 'none';
+          statisticsSection.style.display = 'block';
+        }
+        
+        await loadData();
+      } else {
+        showToast(response.error || t('errorFailedToDelete'), 'error');
       }
-      
-      await loadData();
-    } else {
-      showToast(response.error || t('errorFailedToDelete'), 'error');
+    } catch (error) {
+      console.error('Error deleting config:', error);
+      showToast(t('errorFailedToDelete'), 'error');
     }
-  } catch (error) {
-    console.error('Error deleting config:', error);
-    showToast(t('errorFailedToDelete'), 'error');
-  }
+  });
 }
 
 /**
@@ -595,28 +605,51 @@ function renderStatistics() {
 }
 
 /**
+ * Show confirmation modal
+ * @param {string} message - Confirmation message
+ * @param {Function} onConfirm - Callback when confirmed
+ */
+function showConfirmModal(message, onConfirm) {
+  confirmModalMessage.textContent = message;
+  confirmModal.style.display = 'flex';
+  
+  const handleConfirm = () => {
+    hideConfirmModal();
+    onConfirm();
+  };
+  
+  confirmModalConfirm.onclick = handleConfirm;
+}
+
+/**
+ * Hide confirmation modal
+ */
+function hideConfirmModal() {
+  confirmModal.style.display = 'none';
+  confirmModalConfirm.onclick = null;
+}
+
+/**
  * Handle clear statistics
  */
 async function handleClearStatistics() {
-  if (!confirm(t('msgClearStatisticsConfirm'))) {
-    return;
-  }
+  showConfirmModal(t('msgClearStatisticsConfirm'), async () => {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: MESSAGE_TYPES.CLEAR_STATISTICS
+      });
 
-  try {
-    const response = await chrome.runtime.sendMessage({
-      type: MESSAGE_TYPES.CLEAR_STATISTICS
-    });
-
-    if (response.success) {
-      showToast(t('msgStatisticsCleared'), 'success');
-      await loadStatistics();
-    } else {
-      showToast(response.error || t('errorFailedToClear'), 'error');
+      if (response.success) {
+        showToast(t('msgStatisticsCleared'), 'success');
+        await loadStatistics();
+      } else {
+        showToast(response.error || t('errorFailedToClear'), 'error');
+      }
+    } catch (error) {
+      console.error('Error clearing statistics:', error);
+      showToast(t('errorFailedToClear'), 'error');
     }
-  } catch (error) {
-    console.error('Error clearing statistics:', error);
-    showToast(t('errorFailedToClear'), 'error');
-  }
+  });
 }
 
 /**

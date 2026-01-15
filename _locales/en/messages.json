@@ -99,6 +99,10 @@
     "message": "Cancel",
     "description": "Cancel button"
   },
+  "btnConfirm": {
+    "message": "Confirm",
+    "description": "Confirm button"
+  },
   "btnSave": {
     "message": "Save Configuration",
     "description": "Save button"
@@ -253,6 +257,10 @@
   "msgTestingConnection": {
     "message": "Testing connection...",
     "description": "Testing connection message"
+  },
+  "confirmTitle": {
+    "message": "Confirm",
+    "description": "Confirmation modal title"
   },
   "msgDeleteConfirm": {
     "message": "Are you sure you want to delete",

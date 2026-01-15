@@ -140,6 +140,22 @@
     <!-- Toast notification -->
     <div class="toast" id="toast"></div>
 
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal" style="display: none;">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="confirmModalTitle" data-i18n="confirmTitle">Confirm</h3>
+        </div>
+        <div class="modal-body">
+          <p id="confirmModalMessage"></p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="confirmModalCancel" data-i18n="btnCancel">Cancel</button>
+          <button class="btn btn-danger" id="confirmModalConfirm" data-i18n="btnConfirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer with version -->
     <footer class="page-footer">
       <div class="version-info" id="versionInfo"></div>

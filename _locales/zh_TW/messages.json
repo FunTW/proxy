@@ -99,6 +99,10 @@
     "message": "取消",
     "description": "Cancel button"
   },
+  "btnConfirm": {
+    "message": "確認",
+    "description": "Confirm button"
+  },
   "btnSave": {
     "message": "儲存設定",
     "description": "Save button"
@@ -253,6 +257,10 @@
   "msgTestingConnection": {
     "message": "連線測試中...",
     "description": "Testing connection message"
+  },
+  "confirmTitle": {
+    "message": "確認",
+    "description": "Confirmation modal title"
   },
   "msgDeleteConfirm": {
     "message": "確定要刪除",
