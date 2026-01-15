@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="popupTitle">Proxy Manager</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header with status -->
+    <div class="header">
+      <h1 data-i18n="popupTitle">Proxy Manager</h1>
+      <div class="status-container">
+        <div class="status-indicator" id="statusIndicator">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-text" id="statusText">Disconnected</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current proxy display -->
+    <div class="current-proxy" id="currentProxySection">
+      <div class="current-proxy-info">
+        <div class="current-proxy-name" id="currentProxyName">No proxy active</div>
+        <div class="current-proxy-address" id="currentProxyAddress"></div>
+      </div>
+      <button class="btn btn-disconnect" id="disconnectBtn" disabled data-i18n="btnDisconnect">
+        Disconnect
+      </button>
+    </div>
+
+    <!-- Proxy list -->
+    <div class="proxy-list-container">
+      <div class="proxy-list-header">
+        <h2 data-i18n="quickSwitch">Quick Switch</h2>
+        <button class="btn btn-icon btn-refresh" id="refreshBtn" data-i18n-title="btnRefresh">
+          &#x21bb;
+        </button>
+      </div>
+
+      <div class="proxy-list" id="proxyList">
+        <!-- Proxy items will be inserted here -->
+      </div>
+
+      <div class="empty-state" id="emptyState">
+        <p data-i18n="emptyStateNoProxy">No proxy configurations found.</p>
+        <p data-i18n="emptyStateAddOne">Click Settings to add one.</p>
+      </div>
+    </div>
+
+    <!-- Footer with actions -->
+    <div class="footer">
+      <button class="btn btn-secondary btn-full" id="settingsBtn" data-i18n="btnSettings">
+        Settings
+      </button>
+      <div class="version-info" id="versionInfo"></div>
+    </div>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

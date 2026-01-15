@@ -1,0 +1,314 @@
+{
+  "extName": {
+    "message": "Proxy Manager",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Manage and switch proxy configurations easily",
+    "description": "Extension description"
+  },
+  "popupTitle": {
+    "message": "Proxy Manager",
+    "description": "Popup title"
+  },
+  "statusConnected": {
+    "message": "Connected",
+    "description": "Connected status"
+  },
+  "statusDisconnected": {
+    "message": "Disconnected",
+    "description": "Disconnected status"
+  },
+  "currentProxyNone": {
+    "message": "No proxy active",
+    "description": "No proxy active message"
+  },
+  "btnDisconnect": {
+    "message": "Disconnect",
+    "description": "Disconnect button"
+  },
+  "quickSwitch": {
+    "message": "Quick Switch",
+    "description": "Quick switch section title"
+  },
+  "btnRefresh": {
+    "message": "Refresh",
+    "description": "Refresh button"
+  },
+  "btnSettings": {
+    "message": "Settings",
+    "description": "Settings button"
+  },
+  "emptyStateNoProxy": {
+    "message": "No proxy configurations found.",
+    "description": "Empty state message 1"
+  },
+  "emptyStateAddOne": {
+    "message": "Click Settings to add one.",
+    "description": "Empty state message 2"
+  },
+  "statusConnecting": {
+    "message": "Connecting...",
+    "description": "Connecting status"
+  },
+  "statusDisconnecting": {
+    "message": "Disconnecting...",
+    "description": "Disconnecting status"
+  },
+  "badgeActive": {
+    "message": "ACTIVE",
+    "description": "Active badge text"
+  },
+  "optionsTitle": {
+    "message": "Proxy Manager Settings",
+    "description": "Options page title"
+  },
+  "btnExport": {
+    "message": "Export",
+    "description": "Export button"
+  },
+  "btnImport": {
+    "message": "Import",
+    "description": "Import button"
+  },
+  "importFormatsSupported": {
+    "message": "Supports: Proxy Manager backup (.json), SwitchyOmega/ZeroOmega backup (.bak)",
+    "description": "Supported import formats hint"
+  },
+  "sectionProxyConfigs": {
+    "message": "Proxy Configurations",
+    "description": "Proxy configurations section title"
+  },
+  "btnAddProxy": {
+    "message": "Add Proxy",
+    "description": "Add proxy button"
+  },
+  "btnEdit": {
+    "message": "Edit",
+    "description": "Edit button"
+  },
+  "btnTest": {
+    "message": "Test",
+    "description": "Test button"
+  },
+  "btnDelete": {
+    "message": "Delete",
+    "description": "Delete button"
+  },
+  "btnCancel": {
+    "message": "Cancel",
+    "description": "Cancel button"
+  },
+  "btnSave": {
+    "message": "Save Configuration",
+    "description": "Save button"
+  },
+  "emptyStateNoProxyYet": {
+    "message": "No proxy configurations yet.",
+    "description": "Empty state no proxy message"
+  },
+  "emptyStateClickAdd": {
+    "message": "Click \"Add Proxy\" to create your first one.",
+    "description": "Empty state click add message"
+  },
+
+  "formTitleAdd": {
+    "message": "Add Proxy Configuration",
+    "description": "Add form title"
+  },
+  "formTitleEdit": {
+    "message": "Edit Proxy Configuration",
+    "description": "Edit form title"
+  },
+  "labelProxyName": {
+    "message": "Proxy Name",
+    "description": "Proxy name label"
+  },
+  "labelProxyType": {
+    "message": "Proxy Type",
+    "description": "Proxy type label"
+  },
+  "labelHost": {
+    "message": "Host",
+    "description": "Host label"
+  },
+  "labelPort": {
+    "message": "Port",
+    "description": "Port label"
+  },
+  "labelBypassList": {
+    "message": "Bypass List (comma-separated)",
+    "description": "Bypass list label"
+  },
+  "labelBypassListHelp": {
+    "message": "Domains that should bypass the proxy",
+    "description": "Bypass list help text"
+  },
+  "labelPacScript": {
+    "message": "PAC Script",
+    "description": "PAC script label"
+  },
+  "labelPacScriptHelp": {
+    "message": "Enter your PAC script or",
+    "description": "PAC script help text"
+  },
+  "linkLoadTemplate": {
+    "message": "load template",
+    "description": "Load template link"
+  },
+  "labelColor": {
+    "message": "Color Tag",
+    "description": "Color label"
+  },
+  "placeholderProxyName": {
+    "message": "e.g., Office Proxy",
+    "description": "Proxy name placeholder"
+  },
+  "placeholderHost": {
+    "message": "e.g., proxy.example.com",
+    "description": "Host placeholder"
+  },
+  "placeholderPort": {
+    "message": "8080",
+    "description": "Port placeholder"
+  },
+  "placeholderBypassList": {
+    "message": "localhost, 127.0.0.1, *.local",
+    "description": "Bypass list placeholder"
+  },
+  "placeholderPacScript": {
+    "message": "function FindProxyForURL(url, host) { ... }",
+    "description": "PAC script placeholder"
+  },
+
+  "proxyTypeHttp": {
+    "message": "HTTP",
+    "description": "HTTP proxy type"
+  },
+  "proxyTypeHttps": {
+    "message": "HTTPS",
+    "description": "HTTPS proxy type"
+  },
+  "proxyTypeSocks4": {
+    "message": "SOCKS4",
+    "description": "SOCKS4 proxy type"
+  },
+  "proxyTypeSocks5": {
+    "message": "SOCKS5",
+    "description": "SOCKS5 proxy type"
+  },
+  "proxyTypePac": {
+    "message": "PAC Script",
+    "description": "PAC Script proxy type"
+  },
+  "proxyTypeAutoDetect": {
+    "message": "Auto Detect",
+    "description": "Auto Detect proxy type"
+  },
+  "proxyTypeDirect": {
+    "message": "Direct Connection",
+    "description": "Direct connection type"
+  },
+
+  "sectionStatistics": {
+    "message": "Usage Statistics",
+    "description": "Statistics section title"
+  },
+  "emptyStateNoUsage": {
+    "message": "No usage data yet.",
+    "description": "Empty usage state"
+  },
+  "statisticsConnections": {
+    "message": "connections",
+    "description": "Connections count text"
+  },
+  "msgConfigUpdated": {
+    "message": "Configuration updated successfully",
+    "description": "Config updated message"
+  },
+  "msgConfigSaved": {
+    "message": "Configuration saved successfully",
+    "description": "Config saved message"
+  },
+  "msgConfigDeleted": {
+    "message": "Configuration deleted successfully",
+    "description": "Config deleted message"
+  },
+  "msgExportSuccess": {
+    "message": "Configuration exported successfully",
+    "description": "Export success message"
+  },
+  "msgImportSuccess": {
+    "message": "Configuration imported successfully",
+    "description": "Import success message"
+  },
+  "msgImportOmegaSuccess": {
+    "message": "Omega format imported successfully",
+    "description": "Omega import success message"
+  },
+  "msgTemplateLoaded": {
+    "message": "Template loaded",
+    "description": "Template loaded message"
+  },
+  "msgTestingConnection": {
+    "message": "Testing connection...",
+    "description": "Testing connection message"
+  },
+  "msgDeleteConfirm": {
+    "message": "Are you sure you want to delete",
+    "description": "Delete confirmation message"
+  },
+
+  "errorFailedToLoad": {
+    "message": "Failed to load data",
+    "description": "Failed to load error"
+  },
+  "errorFailedToConnect": {
+    "message": "Failed to connect to background service",
+    "description": "Failed to connect error"
+  },
+  "errorFailedToApply": {
+    "message": "Failed to apply proxy",
+    "description": "Failed to apply error"
+  },
+  "errorFailedToDisconnect": {
+    "message": "Failed to disconnect",
+    "description": "Failed to disconnect error"
+  },
+  "errorFailedToSave": {
+    "message": "Failed to save configuration",
+    "description": "Failed to save error"
+  },
+  "errorFailedToDelete": {
+    "message": "Failed to delete configuration",
+    "description": "Failed to delete error"
+  },
+  "errorFailedToTest": {
+    "message": "Failed to test connection",
+    "description": "Failed to test error"
+  },
+  "errorFailedToExport": {
+    "message": "Failed to export configuration",
+    "description": "Failed to export error"
+  },
+  "errorFailedToImport": {
+    "message": "Failed to import configuration. Invalid file format.",
+    "description": "Failed to import error"
+  },
+  "errorInvalidFormat": {
+    "message": "Invalid file format",
+    "description": "Invalid format error"
+  },
+  "required": {
+    "message": "*",
+    "description": "Required field indicator"
+  },
+  "loading": {
+    "message": "Loading",
+    "description": "Loading text"
+  },
+  "version": {
+    "message": "Version",
+    "description": "Version label"
+  }
+}

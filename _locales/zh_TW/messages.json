@@ -1,0 +1,314 @@
+{
+  "extName": {
+    "message": "代理伺服器管理員",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "輕鬆管理和切換代理伺服器設定",
+    "description": "Extension description"
+  },
+  "popupTitle": {
+    "message": "代理伺服器管理員",
+    "description": "Popup title"
+  },
+  "statusConnected": {
+    "message": "已連線",
+    "description": "Connected status"
+  },
+  "statusDisconnected": {
+    "message": "未連線",
+    "description": "Disconnected status"
+  },
+  "currentProxyNone": {
+    "message": "目前無使用代理",
+    "description": "No proxy active message"
+  },
+  "btnDisconnect": {
+    "message": "中斷連線",
+    "description": "Disconnect button"
+  },
+  "quickSwitch": {
+    "message": "快速切換",
+    "description": "Quick switch section title"
+  },
+  "btnRefresh": {
+    "message": "重新整理",
+    "description": "Refresh button"
+  },
+  "btnSettings": {
+    "message": "設定",
+    "description": "Settings button"
+  },
+  "emptyStateNoProxy": {
+    "message": "找不到代理設定。",
+    "description": "Empty state message 1"
+  },
+  "emptyStateAddOne": {
+    "message": "點擊「設定」來新增一個。",
+    "description": "Empty state message 2"
+  },
+  "statusConnecting": {
+    "message": "連線中...",
+    "description": "Connecting status"
+  },
+  "statusDisconnecting": {
+    "message": "中斷連線中...",
+    "description": "Disconnecting status"
+  },
+  "badgeActive": {
+    "message": "使用中",
+    "description": "Active badge text"
+  },
+  "optionsTitle": {
+    "message": "代理伺服器管理員設定",
+    "description": "Options page title"
+  },
+  "btnExport": {
+    "message": "匯出",
+    "description": "Export button"
+  },
+  "btnImport": {
+    "message": "匯入",
+    "description": "Import button"
+  },
+  "importFormatsSupported": {
+    "message": "支援格式：Proxy Manager 備份 (.json)、SwitchyOmega/ZeroOmega 備份 (.bak)",
+    "description": "Supported import formats hint"
+  },
+  "sectionProxyConfigs": {
+    "message": "代理設定",
+    "description": "Proxy configurations section title"
+  },
+  "btnAddProxy": {
+    "message": "新增代理",
+    "description": "Add proxy button"
+  },
+  "btnEdit": {
+    "message": "編輯",
+    "description": "Edit button"
+  },
+  "btnTest": {
+    "message": "測試",
+    "description": "Test button"
+  },
+  "btnDelete": {
+    "message": "刪除",
+    "description": "Delete button"
+  },
+  "btnCancel": {
+    "message": "取消",
+    "description": "Cancel button"
+  },
+  "btnSave": {
+    "message": "儲存設定",
+    "description": "Save button"
+  },
+  "emptyStateNoProxyYet": {
+    "message": "尚未建立代理設定。",
+    "description": "Empty state no proxy message"
+  },
+  "emptyStateClickAdd": {
+    "message": "點擊「新增代理」來建立第一個設定。",
+    "description": "Empty state click add message"
+  },
+
+  "formTitleAdd": {
+    "message": "新增代理設定",
+    "description": "Add form title"
+  },
+  "formTitleEdit": {
+    "message": "編輯代理設定",
+    "description": "Edit form title"
+  },
+  "labelProxyName": {
+    "message": "代理名稱",
+    "description": "Proxy name label"
+  },
+  "labelProxyType": {
+    "message": "代理類型",
+    "description": "Proxy type label"
+  },
+  "labelHost": {
+    "message": "主機位址",
+    "description": "Host label"
+  },
+  "labelPort": {
+    "message": "連接埠",
+    "description": "Port label"
+  },
+  "labelBypassList": {
+    "message": "略過清單（以逗號分隔）",
+    "description": "Bypass list label"
+  },
+  "labelBypassListHelp": {
+    "message": "這些網域將不使用代理直接連線",
+    "description": "Bypass list help text"
+  },
+  "labelPacScript": {
+    "message": "PAC 腳本",
+    "description": "PAC script label"
+  },
+  "labelPacScriptHelp": {
+    "message": "輸入您的 PAC 腳本或",
+    "description": "PAC script help text"
+  },
+  "linkLoadTemplate": {
+    "message": "載入範本",
+    "description": "Load template link"
+  },
+  "labelColor": {
+    "message": "顏色標籤",
+    "description": "Color label"
+  },
+  "placeholderProxyName": {
+    "message": "例如：公司代理",
+    "description": "Proxy name placeholder"
+  },
+  "placeholderHost": {
+    "message": "例如：proxy.example.com",
+    "description": "Host placeholder"
+  },
+  "placeholderPort": {
+    "message": "8080",
+    "description": "Port placeholder"
+  },
+  "placeholderBypassList": {
+    "message": "localhost, 127.0.0.1, *.local",
+    "description": "Bypass list placeholder"
+  },
+  "placeholderPacScript": {
+    "message": "function FindProxyForURL(url, host) { ... }",
+    "description": "PAC script placeholder"
+  },
+
+  "proxyTypeHttp": {
+    "message": "HTTP",
+    "description": "HTTP proxy type"
+  },
+  "proxyTypeHttps": {
+    "message": "HTTPS",
+    "description": "HTTPS proxy type"
+  },
+  "proxyTypeSocks4": {
+    "message": "SOCKS4",
+    "description": "SOCKS4 proxy type"
+  },
+  "proxyTypeSocks5": {
+    "message": "SOCKS5",
+    "description": "SOCKS5 proxy type"
+  },
+  "proxyTypePac": {
+    "message": "PAC 腳本",
+    "description": "PAC Script proxy type"
+  },
+  "proxyTypeAutoDetect": {
+    "message": "自動偵測",
+    "description": "Auto Detect proxy type"
+  },
+  "proxyTypeDirect": {
+    "message": "直接連線",
+    "description": "Direct connection type"
+  },
+
+  "sectionStatistics": {
+    "message": "使用統計",
+    "description": "Statistics section title"
+  },
+  "emptyStateNoUsage": {
+    "message": "尚無使用資料。",
+    "description": "Empty usage state"
+  },
+  "statisticsConnections": {
+    "message": "次連線",
+    "description": "Connections count text"
+  },
+  "msgConfigUpdated": {
+    "message": "設定已成功更新",
+    "description": "Config updated message"
+  },
+  "msgConfigSaved": {
+    "message": "設定已成功儲存",
+    "description": "Config saved message"
+  },
+  "msgConfigDeleted": {
+    "message": "設定已成功刪除",
+    "description": "Config deleted message"
+  },
+  "msgExportSuccess": {
+    "message": "設定已成功匯出",
+    "description": "Export success message"
+  },
+  "msgImportSuccess": {
+    "message": "設定已成功匯入",
+    "description": "Import success message"
+  },
+  "msgImportOmegaSuccess": {
+    "message": "已成功匯入 Omega 格式",
+    "description": "Omega import success message"
+  },
+  "msgTemplateLoaded": {
+    "message": "已載入範本",
+    "description": "Template loaded message"
+  },
+  "msgTestingConnection": {
+    "message": "連線測試中...",
+    "description": "Testing connection message"
+  },
+  "msgDeleteConfirm": {
+    "message": "確定要刪除",
+    "description": "Delete confirmation message"
+  },
+
+  "errorFailedToLoad": {
+    "message": "載入資料失敗",
+    "description": "Failed to load error"
+  },
+  "errorFailedToConnect": {
+    "message": "無法連線到背景服務",
+    "description": "Failed to connect error"
+  },
+  "errorFailedToApply": {
+    "message": "套用代理失敗",
+    "description": "Failed to apply error"
+  },
+  "errorFailedToDisconnect": {
+    "message": "中斷連線失敗",
+    "description": "Failed to disconnect error"
+  },
+  "errorFailedToSave": {
+    "message": "儲存設定失敗",
+    "description": "Failed to save error"
+  },
+  "errorFailedToDelete": {
+    "message": "刪除設定失敗",
+    "description": "Failed to delete error"
+  },
+  "errorFailedToTest": {
+    "message": "連線測試失敗",
+    "description": "Failed to test error"
+  },
+  "errorFailedToExport": {
+    "message": "匯出設定失敗",
+    "description": "Failed to export error"
+  },
+  "errorFailedToImport": {
+    "message": "匯入設定失敗。檔案格式無效。",
+    "description": "Failed to import error"
+  },
+  "errorInvalidFormat": {
+    "message": "檔案格式無效",
+    "description": "Invalid format error"
+  },
+  "required": {
+    "message": "*",
+    "description": "Required field indicator"
+  },
+  "loading": {
+    "message": "載入中",
+    "description": "Loading text"
+  },
+  "version": {
+    "message": "版本",
+    "description": "Version label"
+  }
+}
