@@ -1,0 +1,338 @@
+{
+  "extName": {
+    "message": "Gerenciador de Proxy",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Gerencie e alterne configurações de proxy facilmente",
+    "description": "Extension description"
+  },
+  "popupTitle": {
+    "message": "Gerenciador de Proxy",
+    "description": "Popup title"
+  },
+  "statusConnected": {
+    "message": "Conectado",
+    "description": "Connected status"
+  },
+  "statusDisconnected": {
+    "message": "Desconectado",
+    "description": "Disconnected status"
+  },
+  "currentProxyNone": {
+    "message": "Nenhum proxy ativo",
+    "description": "No proxy active message"
+  },
+  "btnDisconnect": {
+    "message": "Desconectar",
+    "description": "Disconnect button"
+  },
+  "quickSwitch": {
+    "message": "Troca Rápida",
+    "description": "Quick switch section title"
+  },
+  "btnRefresh": {
+    "message": "Atualizar",
+    "description": "Refresh button"
+  },
+  "btnSettings": {
+    "message": "Configurações",
+    "description": "Settings button"
+  },
+  "emptyStateNoProxy": {
+    "message": "Nenhuma configuração de proxy encontrada.",
+    "description": "Empty state message 1"
+  },
+  "emptyStateAddOne": {
+    "message": "Clique em Configurações para adicionar uma.",
+    "description": "Empty state message 2"
+  },
+  "statusConnecting": {
+    "message": "Conectando...",
+    "description": "Connecting status"
+  },
+  "statusDisconnecting": {
+    "message": "Desconectando...",
+    "description": "Disconnecting status"
+  },
+  "badgeActive": {
+    "message": "ATIVO",
+    "description": "Active badge text"
+  },
+  "optionsTitle": {
+    "message": "Configurações do Gerenciador de Proxy",
+    "description": "Options page title"
+  },
+  "btnExport": {
+    "message": "Exportar",
+    "description": "Export button"
+  },
+  "btnImport": {
+    "message": "Importar",
+    "description": "Import button"
+  },
+  "importFormatsSupported": {
+    "message": "Suporta: Backup do Gerenciador de Proxy (.json), Backup do SwitchyOmega/ZeroOmega (.bak)",
+    "description": "Supported import formats hint"
+  },
+  "sectionProxyConfigs": {
+    "message": "Configurações de Proxy",
+    "description": "Proxy configurations section title"
+  },
+  "btnAddProxy": {
+    "message": "Adicionar Proxy",
+    "description": "Add proxy button"
+  },
+  "btnEdit": {
+    "message": "Editar",
+    "description": "Edit button"
+  },
+  "btnTest": {
+    "message": "Testar",
+    "description": "Test button"
+  },
+  "btnDelete": {
+    "message": "Excluir",
+    "description": "Delete button"
+  },
+  "btnCancel": {
+    "message": "Cancelar",
+    "description": "Cancel button"
+  },
+  "btnConfirm": {
+    "message": "Confirmar",
+    "description": "Confirm button"
+  },
+  "btnSave": {
+    "message": "Salvar Configuração",
+    "description": "Save button"
+  },
+  "emptyStateNoProxyYet": {
+    "message": "Ainda não há configurações de proxy.",
+    "description": "Empty state no proxy message"
+  },
+  "emptyStateClickAdd": {
+    "message": "Clique em \"Adicionar Proxy\" para criar sua primeira configuração.",
+    "description": "Empty state click add message"
+  },
+
+  "formTitleAdd": {
+    "message": "Adicionar Configuração de Proxy",
+    "description": "Add form title"
+  },
+  "formTitleEdit": {
+    "message": "Editar Configuração de Proxy",
+    "description": "Edit form title"
+  },
+  "labelProxyName": {
+    "message": "Nome do Proxy",
+    "description": "Proxy name label"
+  },
+  "labelProxyType": {
+    "message": "Tipo de Proxy",
+    "description": "Proxy type label"
+  },
+  "labelHost": {
+    "message": "Host",
+    "description": "Host label"
+  },
+  "labelPort": {
+    "message": "Porta",
+    "description": "Port label"
+  },
+  "labelBypassList": {
+    "message": "Lista de Desvio (separada por vírgulas)",
+    "description": "Bypass list label"
+  },
+  "labelBypassListHelp": {
+    "message": "Domínios que devem desviar do proxy",
+    "description": "Bypass list help text"
+  },
+  "labelPacScript": {
+    "message": "Script PAC",
+    "description": "PAC script label"
+  },
+  "labelPacScriptHelp": {
+    "message": "Digite seu script PAC ou",
+    "description": "PAC script help text"
+  },
+  "linkLoadTemplate": {
+    "message": "carregar modelo",
+    "description": "Load template link"
+  },
+  "labelColor": {
+    "message": "Etiqueta de Cor",
+    "description": "Color label"
+  },
+  "placeholderProxyName": {
+    "message": "ex., Proxy do Escritório",
+    "description": "Proxy name placeholder"
+  },
+  "placeholderHost": {
+    "message": "ex., proxy.example.com",
+    "description": "Host placeholder"
+  },
+  "placeholderPort": {
+    "message": "8080",
+    "description": "Port placeholder"
+  },
+  "placeholderBypassList": {
+    "message": "localhost, 127.0.0.1, *.local",
+    "description": "Bypass list placeholder"
+  },
+  "placeholderPacScript": {
+    "message": "function FindProxyForURL(url, host) { ... }",
+    "description": "PAC script placeholder"
+  },
+
+  "proxyTypeHttp": {
+    "message": "HTTP",
+    "description": "HTTP proxy type"
+  },
+  "proxyTypeHttps": {
+    "message": "HTTPS",
+    "description": "HTTPS proxy type"
+  },
+  "proxyTypeSocks4": {
+    "message": "SOCKS4",
+    "description": "SOCKS4 proxy type"
+  },
+  "proxyTypeSocks5": {
+    "message": "SOCKS5",
+    "description": "SOCKS5 proxy type"
+  },
+  "proxyTypePac": {
+    "message": "Script PAC",
+    "description": "PAC Script proxy type"
+  },
+  "proxyTypeAutoDetect": {
+    "message": "Detecção Automática",
+    "description": "Auto Detect proxy type"
+  },
+  "proxyTypeDirect": {
+    "message": "Conexão Direta",
+    "description": "Direct connection type"
+  },
+
+  "sectionStatistics": {
+    "message": "Estatísticas de Uso",
+    "description": "Statistics section title"
+  },
+  "emptyStateNoUsage": {
+    "message": "Ainda não há dados de uso.",
+    "description": "Empty usage state"
+  },
+  "statisticsConnections": {
+    "message": "conexões",
+    "description": "Connections count text"
+  },
+  "msgConfigUpdated": {
+    "message": "Configuração atualizada com sucesso",
+    "description": "Config updated message"
+  },
+  "msgConfigSaved": {
+    "message": "Configuração salva com sucesso",
+    "description": "Config saved message"
+  },
+  "msgConfigDeleted": {
+    "message": "Configuração excluída com sucesso",
+    "description": "Config deleted message"
+  },
+  "msgExportSuccess": {
+    "message": "Configuração exportada com sucesso",
+    "description": "Export success message"
+  },
+  "msgImportSuccess": {
+    "message": "Configuração importada com sucesso",
+    "description": "Import success message"
+  },
+  "msgImportOmegaSuccess": {
+    "message": "Formato Omega importado com sucesso",
+    "description": "Omega import success message"
+  },
+  "msgTemplateLoaded": {
+    "message": "Modelo carregado",
+    "description": "Template loaded message"
+  },
+  "msgTestingConnection": {
+    "message": "Testando conexão...",
+    "description": "Testing connection message"
+  },
+  "confirmTitle": {
+    "message": "Confirmar",
+    "description": "Confirmation modal title"
+  },
+  "msgDeleteConfirm": {
+    "message": "Tem certeza de que deseja excluir",
+    "description": "Delete confirmation message"
+  },
+  "btnClearStatistics": {
+    "message": "Limpar Estatísticas",
+    "description": "Clear statistics button"
+  },
+  "msgClearStatisticsConfirm": {
+    "message": "Tem certeza de que deseja limpar todas as estatísticas de uso? Esta ação não pode ser desfeita.",
+    "description": "Clear statistics confirmation message"
+  },
+  "msgStatisticsCleared": {
+    "message": "Estatísticas limpas com sucesso",
+    "description": "Statistics cleared success message"
+  },
+
+  "errorFailedToLoad": {
+    "message": "Falha ao carregar dados",
+    "description": "Failed to load error"
+  },
+  "errorFailedToConnect": {
+    "message": "Falha ao conectar ao serviço em segundo plano",
+    "description": "Failed to connect error"
+  },
+  "errorFailedToApply": {
+    "message": "Falha ao aplicar proxy",
+    "description": "Failed to apply error"
+  },
+  "errorFailedToDisconnect": {
+    "message": "Falha ao desconectar",
+    "description": "Failed to disconnect error"
+  },
+  "errorFailedToSave": {
+    "message": "Falha ao salvar configuração",
+    "description": "Failed to save error"
+  },
+  "errorFailedToDelete": {
+    "message": "Falha ao excluir configuração",
+    "description": "Failed to delete error"
+  },
+  "errorFailedToTest": {
+    "message": "Falha ao testar conexão",
+    "description": "Failed to test error"
+  },
+  "errorFailedToExport": {
+    "message": "Falha ao exportar configuração",
+    "description": "Failed to export error"
+  },
+  "errorFailedToImport": {
+    "message": "Falha ao importar configuração. Formato de arquivo inválido.",
+    "description": "Failed to import error"
+  },
+  "errorFailedToClear": {
+    "message": "Falha ao limpar estatísticas",
+    "description": "Failed to clear statistics error"
+  },
+  "errorInvalidFormat": {
+    "message": "Formato de arquivo inválido",
+    "description": "Invalid format error"
+  },
+  "required": {
+    "message": "*",
+    "description": "Required field indicator"
+  },
+  "loading": {
+    "message": "Carregando",
+    "description": "Loading text"
+  },
+  "version": {
+    "message": "Versão",
+    "description": "Version label"
+  }
+}

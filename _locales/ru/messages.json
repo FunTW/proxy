@@ -1,0 +1,338 @@
+{
+  "extName": {
+    "message": "Менеджер Прокси",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Легко управляйте и переключайте конфигурации прокси",
+    "description": "Extension description"
+  },
+  "popupTitle": {
+    "message": "Менеджер Прокси",
+    "description": "Popup title"
+  },
+  "statusConnected": {
+    "message": "Подключено",
+    "description": "Connected status"
+  },
+  "statusDisconnected": {
+    "message": "Отключено",
+    "description": "Disconnected status"
+  },
+  "currentProxyNone": {
+    "message": "Нет активного прокси",
+    "description": "No proxy active message"
+  },
+  "btnDisconnect": {
+    "message": "Отключить",
+    "description": "Disconnect button"
+  },
+  "quickSwitch": {
+    "message": "Быстрое переключение",
+    "description": "Quick switch section title"
+  },
+  "btnRefresh": {
+    "message": "Обновить",
+    "description": "Refresh button"
+  },
+  "btnSettings": {
+    "message": "Настройки",
+    "description": "Settings button"
+  },
+  "emptyStateNoProxy": {
+    "message": "Конфигурации прокси не найдены.",
+    "description": "Empty state message 1"
+  },
+  "emptyStateAddOne": {
+    "message": "Нажмите Настройки, чтобы добавить.",
+    "description": "Empty state message 2"
+  },
+  "statusConnecting": {
+    "message": "Подключение...",
+    "description": "Connecting status"
+  },
+  "statusDisconnecting": {
+    "message": "Отключение...",
+    "description": "Disconnecting status"
+  },
+  "badgeActive": {
+    "message": "АКТИВНО",
+    "description": "Active badge text"
+  },
+  "optionsTitle": {
+    "message": "Настройки Менеджера Прокси",
+    "description": "Options page title"
+  },
+  "btnExport": {
+    "message": "Экспорт",
+    "description": "Export button"
+  },
+  "btnImport": {
+    "message": "Импорт",
+    "description": "Import button"
+  },
+  "importFormatsSupported": {
+    "message": "Поддерживается: резервная копия Менеджера Прокси (.json), резервная копия SwitchyOmega/ZeroOmega (.bak)",
+    "description": "Supported import formats hint"
+  },
+  "sectionProxyConfigs": {
+    "message": "Конфигурации прокси",
+    "description": "Proxy configurations section title"
+  },
+  "btnAddProxy": {
+    "message": "Добавить прокси",
+    "description": "Add proxy button"
+  },
+  "btnEdit": {
+    "message": "Редактировать",
+    "description": "Edit button"
+  },
+  "btnTest": {
+    "message": "Тест",
+    "description": "Test button"
+  },
+  "btnDelete": {
+    "message": "Удалить",
+    "description": "Delete button"
+  },
+  "btnCancel": {
+    "message": "Отмена",
+    "description": "Cancel button"
+  },
+  "btnConfirm": {
+    "message": "Подтвердить",
+    "description": "Confirm button"
+  },
+  "btnSave": {
+    "message": "Сохранить конфигурацию",
+    "description": "Save button"
+  },
+  "emptyStateNoProxyYet": {
+    "message": "Пока нет конфигураций прокси.",
+    "description": "Empty state no proxy message"
+  },
+  "emptyStateClickAdd": {
+    "message": "Нажмите \"Добавить прокси\", чтобы создать первую конфигурацию.",
+    "description": "Empty state click add message"
+  },
+
+  "formTitleAdd": {
+    "message": "Добавить конфигурацию прокси",
+    "description": "Add form title"
+  },
+  "formTitleEdit": {
+    "message": "Редактировать конфигурацию прокси",
+    "description": "Edit form title"
+  },
+  "labelProxyName": {
+    "message": "Имя прокси",
+    "description": "Proxy name label"
+  },
+  "labelProxyType": {
+    "message": "Тип прокси",
+    "description": "Proxy type label"
+  },
+  "labelHost": {
+    "message": "Хост",
+    "description": "Host label"
+  },
+  "labelPort": {
+    "message": "Порт",
+    "description": "Port label"
+  },
+  "labelBypassList": {
+    "message": "Список обхода (через запятую)",
+    "description": "Bypass list label"
+  },
+  "labelBypassListHelp": {
+    "message": "Домены, которые должны обходить прокси",
+    "description": "Bypass list help text"
+  },
+  "labelPacScript": {
+    "message": "PAC-скрипт",
+    "description": "PAC script label"
+  },
+  "labelPacScriptHelp": {
+    "message": "Введите ваш PAC-скрипт или",
+    "description": "PAC script help text"
+  },
+  "linkLoadTemplate": {
+    "message": "загрузить шаблон",
+    "description": "Load template link"
+  },
+  "labelColor": {
+    "message": "Цветовая метка",
+    "description": "Color label"
+  },
+  "placeholderProxyName": {
+    "message": "напр., Офисный прокси",
+    "description": "Proxy name placeholder"
+  },
+  "placeholderHost": {
+    "message": "напр., proxy.example.com",
+    "description": "Host placeholder"
+  },
+  "placeholderPort": {
+    "message": "8080",
+    "description": "Port placeholder"
+  },
+  "placeholderBypassList": {
+    "message": "localhost, 127.0.0.1, *.local",
+    "description": "Bypass list placeholder"
+  },
+  "placeholderPacScript": {
+    "message": "function FindProxyForURL(url, host) { ... }",
+    "description": "PAC script placeholder"
+  },
+
+  "proxyTypeHttp": {
+    "message": "HTTP",
+    "description": "HTTP proxy type"
+  },
+  "proxyTypeHttps": {
+    "message": "HTTPS",
+    "description": "HTTPS proxy type"
+  },
+  "proxyTypeSocks4": {
+    "message": "SOCKS4",
+    "description": "SOCKS4 proxy type"
+  },
+  "proxyTypeSocks5": {
+    "message": "SOCKS5",
+    "description": "SOCKS5 proxy type"
+  },
+  "proxyTypePac": {
+    "message": "PAC-скрипт",
+    "description": "PAC Script proxy type"
+  },
+  "proxyTypeAutoDetect": {
+    "message": "Автоопределение",
+    "description": "Auto Detect proxy type"
+  },
+  "proxyTypeDirect": {
+    "message": "Прямое соединение",
+    "description": "Direct connection type"
+  },
+
+  "sectionStatistics": {
+    "message": "Статистика использования",
+    "description": "Statistics section title"
+  },
+  "emptyStateNoUsage": {
+    "message": "Пока нет данных об использовании.",
+    "description": "Empty usage state"
+  },
+  "statisticsConnections": {
+    "message": "подключений",
+    "description": "Connections count text"
+  },
+  "msgConfigUpdated": {
+    "message": "Конфигурация успешно обновлена",
+    "description": "Config updated message"
+  },
+  "msgConfigSaved": {
+    "message": "Конфигурация успешно сохранена",
+    "description": "Config saved message"
+  },
+  "msgConfigDeleted": {
+    "message": "Конфигурация успешно удалена",
+    "description": "Config deleted message"
+  },
+  "msgExportSuccess": {
+    "message": "Конфигурация успешно экспортирована",
+    "description": "Export success message"
+  },
+  "msgImportSuccess": {
+    "message": "Конфигурация успешно импортирована",
+    "description": "Import success message"
+  },
+  "msgImportOmegaSuccess": {
+    "message": "Формат Omega успешно импортирован",
+    "description": "Omega import success message"
+  },
+  "msgTemplateLoaded": {
+    "message": "Шаблон загружен",
+    "description": "Template loaded message"
+  },
+  "msgTestingConnection": {
+    "message": "Тестирование соединения...",
+    "description": "Testing connection message"
+  },
+  "confirmTitle": {
+    "message": "Подтвердить",
+    "description": "Confirmation modal title"
+  },
+  "msgDeleteConfirm": {
+    "message": "Вы уверены, что хотите удалить",
+    "description": "Delete confirmation message"
+  },
+  "btnClearStatistics": {
+    "message": "Очистить статистику",
+    "description": "Clear statistics button"
+  },
+  "msgClearStatisticsConfirm": {
+    "message": "Вы уверены, что хотите очистить всю статистику использования? Это действие нельзя отменить.",
+    "description": "Clear statistics confirmation message"
+  },
+  "msgStatisticsCleared": {
+    "message": "Статистика успешно очищена",
+    "description": "Statistics cleared success message"
+  },
+
+  "errorFailedToLoad": {
+    "message": "Не удалось загрузить данные",
+    "description": "Failed to load error"
+  },
+  "errorFailedToConnect": {
+    "message": "Не удалось подключиться к фоновой службе",
+    "description": "Failed to connect error"
+  },
+  "errorFailedToApply": {
+    "message": "Не удалось применить прокси",
+    "description": "Failed to apply error"
+  },
+  "errorFailedToDisconnect": {
+    "message": "Не удалось отключиться",
+    "description": "Failed to disconnect error"
+  },
+  "errorFailedToSave": {
+    "message": "Не удалось сохранить конфигурацию",
+    "description": "Failed to save error"
+  },
+  "errorFailedToDelete": {
+    "message": "Не удалось удалить конфигурацию",
+    "description": "Failed to delete error"
+  },
+  "errorFailedToTest": {
+    "message": "Не удалось протестировать соединение",
+    "description": "Failed to test error"
+  },
+  "errorFailedToExport": {
+    "message": "Не удалось экспортировать конфигурацию",
+    "description": "Failed to export error"
+  },
+  "errorFailedToImport": {
+    "message": "Не удалось импортировать конфигурацию. Неверный формат файла.",
+    "description": "Failed to import error"
+  },
+  "errorFailedToClear": {
+    "message": "Не удалось очистить статистику",
+    "description": "Failed to clear statistics error"
+  },
+  "errorInvalidFormat": {
+    "message": "Неверный формат файла",
+    "description": "Invalid format error"
+  },
+  "required": {
+    "message": "*",
+    "description": "Required field indicator"
+  },
+  "loading": {
+    "message": "Загрузка",
+    "description": "Loading text"
+  },
+  "version": {
+    "message": "Версия",
+    "description": "Version label"
+  }
+}

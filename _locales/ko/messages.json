@@ -1,0 +1,338 @@
+{
+  "extName": {
+    "message": "프록시 매니저",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "프록시 설정을 쉽게 관리하고 전환",
+    "description": "Extension description"
+  },
+  "popupTitle": {
+    "message": "프록시 매니저",
+    "description": "Popup title"
+  },
+  "statusConnected": {
+    "message": "연결됨",
+    "description": "Connected status"
+  },
+  "statusDisconnected": {
+    "message": "연결 끊김",
+    "description": "Disconnected status"
+  },
+  "currentProxyNone": {
+    "message": "활성 프록시 없음",
+    "description": "No proxy active message"
+  },
+  "btnDisconnect": {
+    "message": "연결 끊기",
+    "description": "Disconnect button"
+  },
+  "quickSwitch": {
+    "message": "빠른 전환",
+    "description": "Quick switch section title"
+  },
+  "btnRefresh": {
+    "message": "새로고침",
+    "description": "Refresh button"
+  },
+  "btnSettings": {
+    "message": "설정",
+    "description": "Settings button"
+  },
+  "emptyStateNoProxy": {
+    "message": "프록시 설정을 찾을 수 없습니다.",
+    "description": "Empty state message 1"
+  },
+  "emptyStateAddOne": {
+    "message": "설정을 클릭하여 추가하세요.",
+    "description": "Empty state message 2"
+  },
+  "statusConnecting": {
+    "message": "연결 중...",
+    "description": "Connecting status"
+  },
+  "statusDisconnecting": {
+    "message": "연결 끊는 중...",
+    "description": "Disconnecting status"
+  },
+  "badgeActive": {
+    "message": "활성",
+    "description": "Active badge text"
+  },
+  "optionsTitle": {
+    "message": "프록시 매니저 설정",
+    "description": "Options page title"
+  },
+  "btnExport": {
+    "message": "내보내기",
+    "description": "Export button"
+  },
+  "btnImport": {
+    "message": "가져오기",
+    "description": "Import button"
+  },
+  "importFormatsSupported": {
+    "message": "지원 형식: 프록시 매니저 백업 (.json), SwitchyOmega/ZeroOmega 백업 (.bak)",
+    "description": "Supported import formats hint"
+  },
+  "sectionProxyConfigs": {
+    "message": "프록시 설정",
+    "description": "Proxy configurations section title"
+  },
+  "btnAddProxy": {
+    "message": "프록시 추가",
+    "description": "Add proxy button"
+  },
+  "btnEdit": {
+    "message": "편집",
+    "description": "Edit button"
+  },
+  "btnTest": {
+    "message": "테스트",
+    "description": "Test button"
+  },
+  "btnDelete": {
+    "message": "삭제",
+    "description": "Delete button"
+  },
+  "btnCancel": {
+    "message": "취소",
+    "description": "Cancel button"
+  },
+  "btnConfirm": {
+    "message": "확인",
+    "description": "Confirm button"
+  },
+  "btnSave": {
+    "message": "설정 저장",
+    "description": "Save button"
+  },
+  "emptyStateNoProxyYet": {
+    "message": "아직 프록시 설정이 없습니다.",
+    "description": "Empty state no proxy message"
+  },
+  "emptyStateClickAdd": {
+    "message": "\"프록시 추가\"를 클릭하여 첫 번째 설정을 만드세요.",
+    "description": "Empty state click add message"
+  },
+
+  "formTitleAdd": {
+    "message": "프록시 설정 추가",
+    "description": "Add form title"
+  },
+  "formTitleEdit": {
+    "message": "프록시 설정 편집",
+    "description": "Edit form title"
+  },
+  "labelProxyName": {
+    "message": "프록시 이름",
+    "description": "Proxy name label"
+  },
+  "labelProxyType": {
+    "message": "프록시 유형",
+    "description": "Proxy type label"
+  },
+  "labelHost": {
+    "message": "호스트",
+    "description": "Host label"
+  },
+  "labelPort": {
+    "message": "포트",
+    "description": "Port label"
+  },
+  "labelBypassList": {
+    "message": "우회 목록 (쉼표로 구분)",
+    "description": "Bypass list label"
+  },
+  "labelBypassListHelp": {
+    "message": "프록시를 우회할 도메인",
+    "description": "Bypass list help text"
+  },
+  "labelPacScript": {
+    "message": "PAC 스크립트",
+    "description": "PAC script label"
+  },
+  "labelPacScriptHelp": {
+    "message": "PAC 스크립트를 입력하거나",
+    "description": "PAC script help text"
+  },
+  "linkLoadTemplate": {
+    "message": "템플릿 로드",
+    "description": "Load template link"
+  },
+  "labelColor": {
+    "message": "색상 태그",
+    "description": "Color label"
+  },
+  "placeholderProxyName": {
+    "message": "예: 사무실 프록시",
+    "description": "Proxy name placeholder"
+  },
+  "placeholderHost": {
+    "message": "예: proxy.example.com",
+    "description": "Host placeholder"
+  },
+  "placeholderPort": {
+    "message": "8080",
+    "description": "Port placeholder"
+  },
+  "placeholderBypassList": {
+    "message": "localhost, 127.0.0.1, *.local",
+    "description": "Bypass list placeholder"
+  },
+  "placeholderPacScript": {
+    "message": "function FindProxyForURL(url, host) { ... }",
+    "description": "PAC script placeholder"
+  },
+
+  "proxyTypeHttp": {
+    "message": "HTTP",
+    "description": "HTTP proxy type"
+  },
+  "proxyTypeHttps": {
+    "message": "HTTPS",
+    "description": "HTTPS proxy type"
+  },
+  "proxyTypeSocks4": {
+    "message": "SOCKS4",
+    "description": "SOCKS4 proxy type"
+  },
+  "proxyTypeSocks5": {
+    "message": "SOCKS5",
+    "description": "SOCKS5 proxy type"
+  },
+  "proxyTypePac": {
+    "message": "PAC 스크립트",
+    "description": "PAC Script proxy type"
+  },
+  "proxyTypeAutoDetect": {
+    "message": "자동 감지",
+    "description": "Auto Detect proxy type"
+  },
+  "proxyTypeDirect": {
+    "message": "직접 연결",
+    "description": "Direct connection type"
+  },
+
+  "sectionStatistics": {
+    "message": "사용 통계",
+    "description": "Statistics section title"
+  },
+  "emptyStateNoUsage": {
+    "message": "아직 사용 데이터가 없습니다.",
+    "description": "Empty usage state"
+  },
+  "statisticsConnections": {
+    "message": "회 연결",
+    "description": "Connections count text"
+  },
+  "msgConfigUpdated": {
+    "message": "설정이 성공적으로 업데이트되었습니다",
+    "description": "Config updated message"
+  },
+  "msgConfigSaved": {
+    "message": "설정이 성공적으로 저장되었습니다",
+    "description": "Config saved message"
+  },
+  "msgConfigDeleted": {
+    "message": "설정이 성공적으로 삭제되었습니다",
+    "description": "Config deleted message"
+  },
+  "msgExportSuccess": {
+    "message": "설정이 성공적으로 내보내졌습니다",
+    "description": "Export success message"
+  },
+  "msgImportSuccess": {
+    "message": "설정이 성공적으로 가져와졌습니다",
+    "description": "Import success message"
+  },
+  "msgImportOmegaSuccess": {
+    "message": "Omega 형식이 성공적으로 가져와졌습니다",
+    "description": "Omega import success message"
+  },
+  "msgTemplateLoaded": {
+    "message": "템플릿이 로드되었습니다",
+    "description": "Template loaded message"
+  },
+  "msgTestingConnection": {
+    "message": "연결 테스트 중...",
+    "description": "Testing connection message"
+  },
+  "confirmTitle": {
+    "message": "확인",
+    "description": "Confirmation modal title"
+  },
+  "msgDeleteConfirm": {
+    "message": "정말 삭제하시겠습니까",
+    "description": "Delete confirmation message"
+  },
+  "btnClearStatistics": {
+    "message": "통계 지우기",
+    "description": "Clear statistics button"
+  },
+  "msgClearStatisticsConfirm": {
+    "message": "모든 사용 통계를 지우시겠습니까? 이 작업은 취소할 수 없습니다.",
+    "description": "Clear statistics confirmation message"
+  },
+  "msgStatisticsCleared": {
+    "message": "통계가 성공적으로 지워졌습니다",
+    "description": "Statistics cleared success message"
+  },
+
+  "errorFailedToLoad": {
+    "message": "데이터 로드 실패",
+    "description": "Failed to load error"
+  },
+  "errorFailedToConnect": {
+    "message": "백그라운드 서비스 연결 실패",
+    "description": "Failed to connect error"
+  },
+  "errorFailedToApply": {
+    "message": "프록시 적용 실패",
+    "description": "Failed to apply error"
+  },
+  "errorFailedToDisconnect": {
+    "message": "연결 끊기 실패",
+    "description": "Failed to disconnect error"
+  },
+  "errorFailedToSave": {
+    "message": "설정 저장 실패",
+    "description": "Failed to save error"
+  },
+  "errorFailedToDelete": {
+    "message": "설정 삭제 실패",
+    "description": "Failed to delete error"
+  },
+  "errorFailedToTest": {
+    "message": "연결 테스트 실패",
+    "description": "Failed to test error"
+  },
+  "errorFailedToExport": {
+    "message": "설정 내보내기 실패",
+    "description": "Failed to export error"
+  },
+  "errorFailedToImport": {
+    "message": "설정 가져오기 실패. 파일 형식이 올바르지 않습니다.",
+    "description": "Failed to import error"
+  },
+  "errorFailedToClear": {
+    "message": "통계 지우기 실패",
+    "description": "Failed to clear statistics error"
+  },
+  "errorInvalidFormat": {
+    "message": "파일 형식이 올바르지 않습니다",
+    "description": "Invalid format error"
+  },
+  "required": {
+    "message": "*",
+    "description": "Required field indicator"
+  },
+  "loading": {
+    "message": "로드 중",
+    "description": "Loading text"
+  },
+  "version": {
+    "message": "버전",
+    "description": "Version label"
+  }
+}

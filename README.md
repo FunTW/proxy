@@ -130,6 +130,15 @@ A Chrome extension for managing and switching proxy configurations with support 
 - **Multi-language support**:
   - English (en)
   - Traditional Chinese / 繁體中文 (zh_TW)
+  - Simplified Chinese / 简体中文 (zh_CN)
+  - Japanese / 日本語 (ja)
+  - Korean / 한국어 (ko)
+  - Spanish / Español (es)
+  - French / Français (fr)
+  - German / Deutsch (de)
+  - Russian / Русский (ru)
+  - Portuguese / Português (pt)
+  - Italian / Italiano (it)
 
 ## Installation
 
@@ -380,6 +389,15 @@ The extension supports multiple languages and will automatically use your browse
 
 - **English (en)** - Default language
 - **Traditional Chinese (zh_TW)** - 繁體中文（台灣）
+- **Simplified Chinese (zh_CN)** - 简体中文（中国）
+- **Japanese (ja)** - 日本語
+- **Korean (ko)** - 한국어
+- **Spanish (es)** - Español
+- **French (fr)** - Français
+- **German (de)** - Deutsch
+- **Russian (ru)** - Русский
+- **Portuguese (pt)** - Português
+- **Italian (it)** - Italiano
 
 ### How Language is Detected
 
@@ -414,6 +432,9 @@ Example language codes:
 - `es` - Spanish
 - `fr` - French
 - `de` - German
+- `ru` - Russian
+- `pt` - Portuguese
+- `it` - Italian
 
 ### Translation File Format
 

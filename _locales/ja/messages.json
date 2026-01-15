@@ -1,0 +1,338 @@
+{
+  "extName": {
+    "message": "プロキシマネージャー",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "プロキシ設定を簡単に管理・切り替え",
+    "description": "Extension description"
+  },
+  "popupTitle": {
+    "message": "プロキシマネージャー",
+    "description": "Popup title"
+  },
+  "statusConnected": {
+    "message": "接続済み",
+    "description": "Connected status"
+  },
+  "statusDisconnected": {
+    "message": "未接続",
+    "description": "Disconnected status"
+  },
+  "currentProxyNone": {
+    "message": "アクティブなプロキシがありません",
+    "description": "No proxy active message"
+  },
+  "btnDisconnect": {
+    "message": "切断",
+    "description": "Disconnect button"
+  },
+  "quickSwitch": {
+    "message": "クイック切り替え",
+    "description": "Quick switch section title"
+  },
+  "btnRefresh": {
+    "message": "更新",
+    "description": "Refresh button"
+  },
+  "btnSettings": {
+    "message": "設定",
+    "description": "Settings button"
+  },
+  "emptyStateNoProxy": {
+    "message": "プロキシ設定が見つかりません。",
+    "description": "Empty state message 1"
+  },
+  "emptyStateAddOne": {
+    "message": "設定をクリックして追加してください。",
+    "description": "Empty state message 2"
+  },
+  "statusConnecting": {
+    "message": "接続中...",
+    "description": "Connecting status"
+  },
+  "statusDisconnecting": {
+    "message": "切断中...",
+    "description": "Disconnecting status"
+  },
+  "badgeActive": {
+    "message": "有効",
+    "description": "Active badge text"
+  },
+  "optionsTitle": {
+    "message": "プロキシマネージャー設定",
+    "description": "Options page title"
+  },
+  "btnExport": {
+    "message": "エクスポート",
+    "description": "Export button"
+  },
+  "btnImport": {
+    "message": "インポート",
+    "description": "Import button"
+  },
+  "importFormatsSupported": {
+    "message": "対応形式：プロキシマネージャーバックアップ (.json)、SwitchyOmega/ZeroOmega バックアップ (.bak)",
+    "description": "Supported import formats hint"
+  },
+  "sectionProxyConfigs": {
+    "message": "プロキシ設定",
+    "description": "Proxy configurations section title"
+  },
+  "btnAddProxy": {
+    "message": "プロキシを追加",
+    "description": "Add proxy button"
+  },
+  "btnEdit": {
+    "message": "編集",
+    "description": "Edit button"
+  },
+  "btnTest": {
+    "message": "テスト",
+    "description": "Test button"
+  },
+  "btnDelete": {
+    "message": "削除",
+    "description": "Delete button"
+  },
+  "btnCancel": {
+    "message": "キャンセル",
+    "description": "Cancel button"
+  },
+  "btnConfirm": {
+    "message": "確認",
+    "description": "Confirm button"
+  },
+  "btnSave": {
+    "message": "設定を保存",
+    "description": "Save button"
+  },
+  "emptyStateNoProxyYet": {
+    "message": "プロキシ設定がまだありません。",
+    "description": "Empty state no proxy message"
+  },
+  "emptyStateClickAdd": {
+    "message": "「プロキシを追加」をクリックして最初の設定を作成してください。",
+    "description": "Empty state click add message"
+  },
+
+  "formTitleAdd": {
+    "message": "プロキシ設定を追加",
+    "description": "Add form title"
+  },
+  "formTitleEdit": {
+    "message": "プロキシ設定を編集",
+    "description": "Edit form title"
+  },
+  "labelProxyName": {
+    "message": "プロキシ名",
+    "description": "Proxy name label"
+  },
+  "labelProxyType": {
+    "message": "プロキシタイプ",
+    "description": "Proxy type label"
+  },
+  "labelHost": {
+    "message": "ホスト",
+    "description": "Host label"
+  },
+  "labelPort": {
+    "message": "ポート",
+    "description": "Port label"
+  },
+  "labelBypassList": {
+    "message": "バイパスリスト（カンマ区切り）",
+    "description": "Bypass list label"
+  },
+  "labelBypassListHelp": {
+    "message": "プロキシをバイパスするドメイン",
+    "description": "Bypass list help text"
+  },
+  "labelPacScript": {
+    "message": "PAC スクリプト",
+    "description": "PAC script label"
+  },
+  "labelPacScriptHelp": {
+    "message": "PAC スクリプトを入力するか、",
+    "description": "PAC script help text"
+  },
+  "linkLoadTemplate": {
+    "message": "テンプレートを読み込む",
+    "description": "Load template link"
+  },
+  "labelColor": {
+    "message": "カラータグ",
+    "description": "Color label"
+  },
+  "placeholderProxyName": {
+    "message": "例：オフィスプロキシ",
+    "description": "Proxy name placeholder"
+  },
+  "placeholderHost": {
+    "message": "例：proxy.example.com",
+    "description": "Host placeholder"
+  },
+  "placeholderPort": {
+    "message": "8080",
+    "description": "Port placeholder"
+  },
+  "placeholderBypassList": {
+    "message": "localhost, 127.0.0.1, *.local",
+    "description": "Bypass list placeholder"
+  },
+  "placeholderPacScript": {
+    "message": "function FindProxyForURL(url, host) { ... }",
+    "description": "PAC script placeholder"
+  },
+
+  "proxyTypeHttp": {
+    "message": "HTTP",
+    "description": "HTTP proxy type"
+  },
+  "proxyTypeHttps": {
+    "message": "HTTPS",
+    "description": "HTTPS proxy type"
+  },
+  "proxyTypeSocks4": {
+    "message": "SOCKS4",
+    "description": "SOCKS4 proxy type"
+  },
+  "proxyTypeSocks5": {
+    "message": "SOCKS5",
+    "description": "SOCKS5 proxy type"
+  },
+  "proxyTypePac": {
+    "message": "PAC スクリプト",
+    "description": "PAC Script proxy type"
+  },
+  "proxyTypeAutoDetect": {
+    "message": "自動検出",
+    "description": "Auto Detect proxy type"
+  },
+  "proxyTypeDirect": {
+    "message": "直接接続",
+    "description": "Direct connection type"
+  },
+
+  "sectionStatistics": {
+    "message": "使用統計",
+    "description": "Statistics section title"
+  },
+  "emptyStateNoUsage": {
+    "message": "使用データがまだありません。",
+    "description": "Empty usage state"
+  },
+  "statisticsConnections": {
+    "message": "回の接続",
+    "description": "Connections count text"
+  },
+  "msgConfigUpdated": {
+    "message": "設定が正常に更新されました",
+    "description": "Config updated message"
+  },
+  "msgConfigSaved": {
+    "message": "設定が正常に保存されました",
+    "description": "Config saved message"
+  },
+  "msgConfigDeleted": {
+    "message": "設定が正常に削除されました",
+    "description": "Config deleted message"
+  },
+  "msgExportSuccess": {
+    "message": "設定が正常にエクスポートされました",
+    "description": "Export success message"
+  },
+  "msgImportSuccess": {
+    "message": "設定が正常にインポートされました",
+    "description": "Import success message"
+  },
+  "msgImportOmegaSuccess": {
+    "message": "Omega 形式が正常にインポートされました",
+    "description": "Omega import success message"
+  },
+  "msgTemplateLoaded": {
+    "message": "テンプレートが読み込まれました",
+    "description": "Template loaded message"
+  },
+  "msgTestingConnection": {
+    "message": "接続をテスト中...",
+    "description": "Testing connection message"
+  },
+  "confirmTitle": {
+    "message": "確認",
+    "description": "Confirmation modal title"
+  },
+  "msgDeleteConfirm": {
+    "message": "削除してもよろしいですか",
+    "description": "Delete confirmation message"
+  },
+  "btnClearStatistics": {
+    "message": "統計をクリア",
+    "description": "Clear statistics button"
+  },
+  "msgClearStatisticsConfirm": {
+    "message": "すべての使用統計をクリアしてもよろしいですか？この操作は元に戻せません。",
+    "description": "Clear statistics confirmation message"
+  },
+  "msgStatisticsCleared": {
+    "message": "統計が正常にクリアされました",
+    "description": "Statistics cleared success message"
+  },
+
+  "errorFailedToLoad": {
+    "message": "データの読み込みに失敗しました",
+    "description": "Failed to load error"
+  },
+  "errorFailedToConnect": {
+    "message": "バックグラウンドサービスへの接続に失敗しました",
+    "description": "Failed to connect error"
+  },
+  "errorFailedToApply": {
+    "message": "プロキシの適用に失敗しました",
+    "description": "Failed to apply error"
+  },
+  "errorFailedToDisconnect": {
+    "message": "切断に失敗しました",
+    "description": "Failed to disconnect error"
+  },
+  "errorFailedToSave": {
+    "message": "設定の保存に失敗しました",
+    "description": "Failed to save error"
+  },
+  "errorFailedToDelete": {
+    "message": "設定の削除に失敗しました",
+    "description": "Failed to delete error"
+  },
+  "errorFailedToTest": {
+    "message": "接続のテストに失敗しました",
+    "description": "Failed to test error"
+  },
+  "errorFailedToExport": {
+    "message": "設定のエクスポートに失敗しました",
+    "description": "Failed to export error"
+  },
+  "errorFailedToImport": {
+    "message": "設定のインポートに失敗しました。ファイル形式が無効です。",
+    "description": "Failed to import error"
+  },
+  "errorFailedToClear": {
+    "message": "統計のクリアに失敗しました",
+    "description": "Failed to clear statistics error"
+  },
+  "errorInvalidFormat": {
+    "message": "ファイル形式が無効です",
+    "description": "Invalid format error"
+  },
+  "required": {
+    "message": "*",
+    "description": "Required field indicator"
+  },
+  "loading": {
+    "message": "読み込み中",
+    "description": "Loading text"
+  },
+  "version": {
+    "message": "バージョン",
+    "description": "Version label"
+  }
+}

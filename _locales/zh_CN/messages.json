@@ -1,0 +1,338 @@
+{
+  "extName": {
+    "message": "代理管理器",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "轻松管理和切换代理配置",
+    "description": "Extension description"
+  },
+  "popupTitle": {
+    "message": "代理管理器",
+    "description": "Popup title"
+  },
+  "statusConnected": {
+    "message": "已连接",
+    "description": "Connected status"
+  },
+  "statusDisconnected": {
+    "message": "未连接",
+    "description": "Disconnected status"
+  },
+  "currentProxyNone": {
+    "message": "无活动代理",
+    "description": "No proxy active message"
+  },
+  "btnDisconnect": {
+    "message": "断开连接",
+    "description": "Disconnect button"
+  },
+  "quickSwitch": {
+    "message": "快速切换",
+    "description": "Quick switch section title"
+  },
+  "btnRefresh": {
+    "message": "刷新",
+    "description": "Refresh button"
+  },
+  "btnSettings": {
+    "message": "设置",
+    "description": "Settings button"
+  },
+  "emptyStateNoProxy": {
+    "message": "未找到代理配置。",
+    "description": "Empty state message 1"
+  },
+  "emptyStateAddOne": {
+    "message": "点击设置以添加一个。",
+    "description": "Empty state message 2"
+  },
+  "statusConnecting": {
+    "message": "连接中...",
+    "description": "Connecting status"
+  },
+  "statusDisconnecting": {
+    "message": "断开连接中...",
+    "description": "Disconnecting status"
+  },
+  "badgeActive": {
+    "message": "活动",
+    "description": "Active badge text"
+  },
+  "optionsTitle": {
+    "message": "代理管理器设置",
+    "description": "Options page title"
+  },
+  "btnExport": {
+    "message": "导出",
+    "description": "Export button"
+  },
+  "btnImport": {
+    "message": "导入",
+    "description": "Import button"
+  },
+  "importFormatsSupported": {
+    "message": "支持：代理管理器备份 (.json)、SwitchyOmega/ZeroOmega 备份 (.bak)",
+    "description": "Supported import formats hint"
+  },
+  "sectionProxyConfigs": {
+    "message": "代理配置",
+    "description": "Proxy configurations section title"
+  },
+  "btnAddProxy": {
+    "message": "添加代理",
+    "description": "Add proxy button"
+  },
+  "btnEdit": {
+    "message": "编辑",
+    "description": "Edit button"
+  },
+  "btnTest": {
+    "message": "测试",
+    "description": "Test button"
+  },
+  "btnDelete": {
+    "message": "删除",
+    "description": "Delete button"
+  },
+  "btnCancel": {
+    "message": "取消",
+    "description": "Cancel button"
+  },
+  "btnConfirm": {
+    "message": "确认",
+    "description": "Confirm button"
+  },
+  "btnSave": {
+    "message": "保存配置",
+    "description": "Save button"
+  },
+  "emptyStateNoProxyYet": {
+    "message": "尚无代理配置。",
+    "description": "Empty state no proxy message"
+  },
+  "emptyStateClickAdd": {
+    "message": "点击"添加代理"创建您的第一个配置。",
+    "description": "Empty state click add message"
+  },
+
+  "formTitleAdd": {
+    "message": "添加代理配置",
+    "description": "Add form title"
+  },
+  "formTitleEdit": {
+    "message": "编辑代理配置",
+    "description": "Edit form title"
+  },
+  "labelProxyName": {
+    "message": "代理名称",
+    "description": "Proxy name label"
+  },
+  "labelProxyType": {
+    "message": "代理类型",
+    "description": "Proxy type label"
+  },
+  "labelHost": {
+    "message": "主机",
+    "description": "Host label"
+  },
+  "labelPort": {
+    "message": "端口",
+    "description": "Port label"
+  },
+  "labelBypassList": {
+    "message": "绕过列表（逗号分隔）",
+    "description": "Bypass list label"
+  },
+  "labelBypassListHelp": {
+    "message": "应绕过代理的域名",
+    "description": "Bypass list help text"
+  },
+  "labelPacScript": {
+    "message": "PAC 脚本",
+    "description": "PAC script label"
+  },
+  "labelPacScriptHelp": {
+    "message": "输入您的 PAC 脚本或",
+    "description": "PAC script help text"
+  },
+  "linkLoadTemplate": {
+    "message": "加载模板",
+    "description": "Load template link"
+  },
+  "labelColor": {
+    "message": "颜色标签",
+    "description": "Color label"
+  },
+  "placeholderProxyName": {
+    "message": "例如：办公室代理",
+    "description": "Proxy name placeholder"
+  },
+  "placeholderHost": {
+    "message": "例如：proxy.example.com",
+    "description": "Host placeholder"
+  },
+  "placeholderPort": {
+    "message": "8080",
+    "description": "Port placeholder"
+  },
+  "placeholderBypassList": {
+    "message": "localhost, 127.0.0.1, *.local",
+    "description": "Bypass list placeholder"
+  },
+  "placeholderPacScript": {
+    "message": "function FindProxyForURL(url, host) { ... }",
+    "description": "PAC script placeholder"
+  },
+
+  "proxyTypeHttp": {
+    "message": "HTTP",
+    "description": "HTTP proxy type"
+  },
+  "proxyTypeHttps": {
+    "message": "HTTPS",
+    "description": "HTTPS proxy type"
+  },
+  "proxyTypeSocks4": {
+    "message": "SOCKS4",
+    "description": "SOCKS4 proxy type"
+  },
+  "proxyTypeSocks5": {
+    "message": "SOCKS5",
+    "description": "SOCKS5 proxy type"
+  },
+  "proxyTypePac": {
+    "message": "PAC 脚本",
+    "description": "PAC Script proxy type"
+  },
+  "proxyTypeAutoDetect": {
+    "message": "自动检测",
+    "description": "Auto Detect proxy type"
+  },
+  "proxyTypeDirect": {
+    "message": "直接连接",
+    "description": "Direct connection type"
+  },
+
+  "sectionStatistics": {
+    "message": "使用统计",
+    "description": "Statistics section title"
+  },
+  "emptyStateNoUsage": {
+    "message": "尚无使用数据。",
+    "description": "Empty usage state"
+  },
+  "statisticsConnections": {
+    "message": "次连接",
+    "description": "Connections count text"
+  },
+  "msgConfigUpdated": {
+    "message": "配置更新成功",
+    "description": "Config updated message"
+  },
+  "msgConfigSaved": {
+    "message": "配置保存成功",
+    "description": "Config saved message"
+  },
+  "msgConfigDeleted": {
+    "message": "配置删除成功",
+    "description": "Config deleted message"
+  },
+  "msgExportSuccess": {
+    "message": "配置导出成功",
+    "description": "Export success message"
+  },
+  "msgImportSuccess": {
+    "message": "配置导入成功",
+    "description": "Import success message"
+  },
+  "msgImportOmegaSuccess": {
+    "message": "Omega 格式导入成功",
+    "description": "Omega import success message"
+  },
+  "msgTemplateLoaded": {
+    "message": "模板已加载",
+    "description": "Template loaded message"
+  },
+  "msgTestingConnection": {
+    "message": "测试连接中...",
+    "description": "Testing connection message"
+  },
+  "confirmTitle": {
+    "message": "确认",
+    "description": "Confirmation modal title"
+  },
+  "msgDeleteConfirm": {
+    "message": "您确定要删除",
+    "description": "Delete confirmation message"
+  },
+  "btnClearStatistics": {
+    "message": "清除统计",
+    "description": "Clear statistics button"
+  },
+  "msgClearStatisticsConfirm": {
+    "message": "您确定要清除所有使用统计吗？此操作无法撤销。",
+    "description": "Clear statistics confirmation message"
+  },
+  "msgStatisticsCleared": {
+    "message": "统计已清除成功",
+    "description": "Statistics cleared success message"
+  },
+
+  "errorFailedToLoad": {
+    "message": "加载数据失败",
+    "description": "Failed to load error"
+  },
+  "errorFailedToConnect": {
+    "message": "连接后台服务失败",
+    "description": "Failed to connect error"
+  },
+  "errorFailedToApply": {
+    "message": "应用代理失败",
+    "description": "Failed to apply error"
+  },
+  "errorFailedToDisconnect": {
+    "message": "断开连接失败",
+    "description": "Failed to disconnect error"
+  },
+  "errorFailedToSave": {
+    "message": "保存配置失败",
+    "description": "Failed to save error"
+  },
+  "errorFailedToDelete": {
+    "message": "删除配置失败",
+    "description": "Failed to delete error"
+  },
+  "errorFailedToTest": {
+    "message": "测试连接失败",
+    "description": "Failed to test error"
+  },
+  "errorFailedToExport": {
+    "message": "导出配置失败",
+    "description": "Failed to export error"
+  },
+  "errorFailedToImport": {
+    "message": "导入配置失败。文件格式无效。",
+    "description": "Failed to import error"
+  },
+  "errorFailedToClear": {
+    "message": "清除统计失败",
+    "description": "Failed to clear statistics error"
+  },
+  "errorInvalidFormat": {
+    "message": "文件格式无效",
+    "description": "Invalid format error"
+  },
+  "required": {
+    "message": "*",
+    "description": "Required field indicator"
+  },
+  "loading": {
+    "message": "加载中",
+    "description": "Loading text"
+  },
+  "version": {
+    "message": "版本",
+    "description": "Version label"
+  }
+}
