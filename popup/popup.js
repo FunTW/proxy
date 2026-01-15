@@ -45,6 +45,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   disconnectBtn.addEventListener('click', handleDisconnect);
   refreshBtn.addEventListener('click', handleRefresh);
   settingsBtn.addEventListener('click', openSettings);
+  
+  // Use event delegation for proxy list items
+  proxyList.addEventListener('click', (e) => {
+    const item = e.target.closest('.proxy-item');
+    if (!item) return;
+    
+    const configId = item.dataset.configId;
+    if (!configId) return;
+    
+    const config = proxyConfigs.find(c => c.id === configId);
+    if (config) {
+      handleProxyClick(config);
+    }
+  });
 
   logger.log('[Popup] Event listeners set up');
 
@@ -172,6 +186,7 @@ function renderProxyList() {
 function createProxyItem(config) {
   const item = document.createElement('div');
   item.className = 'proxy-item';
+  item.dataset.configId = config.id;
 
   // Check if this is the active proxy
   const isActive = currentStatus?.isActive && currentStatus?.proxy?.id === config.id;
@@ -211,15 +226,6 @@ function createProxyItem(config) {
     item.appendChild(colorBar);
     item.appendChild(info);
   }
-
-  // Click handler
-  logger.log('[Popup] Adding click handler for:', config.name, config.id, 'isActive:', isActive);
-  item.addEventListener('click', (e) => {
-    logger.log('[Popup] Click event fired on item:', config.name);
-    e.preventDefault();
-    e.stopPropagation();
-    handleProxyClick(config);
-  });
 
   return item;
 }

@@ -99,6 +99,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Listen for storage changes
   chrome.storage.onChanged.addListener(handleStorageChange);
+  
+  // Use event delegation for proxy list items
+  proxyListSidebar.addEventListener('click', (e) => {
+    const item = e.target.closest('.proxy-list-item');
+    if (!item) return;
+    
+    const configId = item.dataset.configId;
+    if (!configId) return;
+    
+    const config = proxyConfigs.find(c => c.id === configId);
+    if (config) {
+      showProxyDetail(config);
+    }
+  });
 
   // Load initial data
   await loadData();
@@ -214,6 +228,7 @@ function renderProxyList() {
 function createProxyListItem(config) {
   const item = document.createElement('div');
   item.className = 'proxy-list-item';
+  item.dataset.configId = config.id;
 
   // Check if active
   const isActive = currentStatus?.isActive && currentStatus?.proxy?.id === config.id;
@@ -256,9 +271,6 @@ function createProxyListItem(config) {
     badge.textContent = t('badgeActive');
     item.appendChild(badge);
   }
-
-  // Click handler to show detail
-  item.addEventListener('click', () => showProxyDetail(config));
 
   return item;
 }
@@ -585,7 +597,13 @@ function loadPACTemplate() {
  */
 function renderStatistics() {
   if (!statistics || !statistics.byProxy || Object.keys(statistics.byProxy).length === 0) {
-    statisticsContainer.innerHTML = `<div class="empty-state visible"><p>${t('emptyStateNoUsage')}</p></div>`;
+    const emptyDiv = document.createElement('div');
+    emptyDiv.className = 'empty-state visible';
+    const emptyP = document.createElement('p');
+    emptyP.textContent = t('emptyStateNoUsage');
+    emptyDiv.appendChild(emptyP);
+    statisticsContainer.innerHTML = '';
+    statisticsContainer.appendChild(emptyDiv);
     return;
   }
 
@@ -602,13 +620,26 @@ function renderStatistics() {
 
     const statItem = document.createElement('div');
     statItem.className = 'stat-item';
-    statItem.innerHTML = `
-      <div class="stat-name">${escapeHtml(proxyName)}</div>
-      <div class="stat-bar">
-        <div class="stat-bar-fill" style="width: ${percentage}%"></div>
-      </div>
-      <div class="stat-value">${stat.connections} ${t('statisticsConnections')}</div>
-    `;
+    
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'stat-name';
+    nameDiv.textContent = proxyName;
+    
+    const barDiv = document.createElement('div');
+    barDiv.className = 'stat-bar';
+    const fillDiv = document.createElement('div');
+    fillDiv.className = 'stat-bar-fill';
+    fillDiv.style.width = `${percentage}%`;
+    barDiv.appendChild(fillDiv);
+    
+    const valueDiv = document.createElement('div');
+    valueDiv.className = 'stat-value';
+    valueDiv.textContent = `${stat.connections} ${t('statisticsConnections')}`;
+    
+    statItem.appendChild(nameDiv);
+    statItem.appendChild(barDiv);
+    statItem.appendChild(valueDiv);
+    
     fragment.appendChild(statItem);
   });
 

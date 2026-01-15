@@ -5,13 +5,32 @@ import { logger } from './logger.js';
  * Storage abstraction layer for chrome.storage API
  */
 
+// Simple in-memory cache to reduce storage reads
+let configsCache = null;
+let cacheValid = false;
+
+/**
+ * Invalidate cache (call after any write operation)
+ */
+function invalidateCache() {
+  cacheValid = false;
+  configsCache = null;
+}
+
 /**
  * Get all proxy configurations
  * @returns {Promise<Array>} Array of proxy configurations
  */
 export async function getProxyConfigs() {
+  if (cacheValid && configsCache !== null) {
+    return configsCache;
+  }
+  
   const result = await chrome.storage.local.get(STORAGE_KEYS.PROXY_CONFIGS);
-  return result[STORAGE_KEYS.PROXY_CONFIGS] || [];
+  const configs = result[STORAGE_KEYS.PROXY_CONFIGS] || [];
+  configsCache = configs;
+  cacheValid = true;
+  return configs;
 }
 
 /**
@@ -23,6 +42,8 @@ export async function saveProxyConfig(config) {
   const configs = await getProxyConfigs();
   configs.push(config);
   await chrome.storage.local.set({ [STORAGE_KEYS.PROXY_CONFIGS]: configs });
+  configsCache = configs;
+  cacheValid = true;
 }
 
 /**
@@ -41,6 +62,8 @@ export async function updateProxyConfig(id, updatedConfig) {
 
   configs[index] = { ...configs[index], ...updatedConfig };
   await chrome.storage.local.set({ [STORAGE_KEYS.PROXY_CONFIGS]: configs });
+  configsCache = configs;
+  cacheValid = true;
   return true;
 }
 
@@ -58,6 +81,8 @@ export async function deleteProxyConfig(id) {
   }
 
   await chrome.storage.local.set({ [STORAGE_KEYS.PROXY_CONFIGS]: filteredConfigs });
+  configsCache = filteredConfigs;
+  cacheValid = true;
 
   // If the deleted config was active, clear current proxy
   const currentProxyId = await getCurrentProxyId();
@@ -176,6 +201,7 @@ export async function initializeStorage() {
  */
 export async function clearAllData() {
   await chrome.storage.local.clear();
+  invalidateCache();
   await initializeStorage();
 }
 
@@ -224,9 +250,13 @@ export async function importData(data, merge = true) {
       }
 
       await chrome.storage.local.set({ [STORAGE_KEYS.PROXY_CONFIGS]: mergedConfigs });
+      configsCache = mergedConfigs;
+      cacheValid = true;
     } else {
       // Replace all configs
       await chrome.storage.local.set({ [STORAGE_KEYS.PROXY_CONFIGS]: configs });
+      configsCache = configs;
+      cacheValid = true;
     }
 
     // Import settings if provided (only for native format)
