@@ -112,7 +112,7 @@
     "description": "Empty state no proxy message"
   },
   "emptyStateClickAdd": {
-    "message": "点击"添加代理"创建您的第一个配置。",
+    "message": "点击「添加代理」创建您的第一个配置。",
     "description": "Empty state click add message"
   },
 

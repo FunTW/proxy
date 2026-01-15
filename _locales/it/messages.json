@@ -112,7 +112,7 @@
     "description": "Empty state no proxy message"
   },
   "emptyStateClickAdd": {
-    "message": "Fai clic su \"Aggiungi Proxy\" per creare la tua prima configurazione.",
+    "message": "Fai clic su \\\"Aggiungi Proxy\\\" per creare la tua prima configurazione.",
     "description": "Empty state click add message"
   },
 

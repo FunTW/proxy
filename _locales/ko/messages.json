@@ -112,7 +112,7 @@
     "description": "Empty state no proxy message"
   },
   "emptyStateClickAdd": {
-    "message": "\"프록시 추가\"를 클릭하여 첫 번째 설정을 만드세요.",
+    "message": "\\\"프록시 추가\\\"를 클릭하여 첫 번째 설정을 만드세요.",
     "description": "Empty state click add message"
   },
 
