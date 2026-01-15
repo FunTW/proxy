@@ -4,6 +4,47 @@ A Chrome extension for managing and switching proxy configurations with support 
 
 ## 最近更新 (Recent Updates)
 
+### 2026-01-16
+
+#### 全面優化 (Comprehensive Optimization)
+
+1. **效能優化 (Performance Improvements)**
+   - 在 service worker 中加入配置快取機制，減少重複的 storage 讀取
+   - 使用 DocumentFragment 批量 DOM 操作，提升渲染效能
+   - 加入 retry 機制處理暫時性網路錯誤
+   - 優化事件監聽器管理，避免記憶體洩漏
+
+2. **安全性增強 (Security Enhancements)**
+   - 所有用戶輸入都經過 XSS 防護處理（使用 `escapeHtml`）
+   - 加強輸入驗證：
+     - Port 範圍驗證（1-65535）
+     - Host 格式驗證（IP/域名）
+     - PAC script 大小限制（1MB）
+     - Proxy 名稱長度限制（100字元）
+     - Bypass list 數量限制（100項）
+   - 防止 PAC script 注入攻擊
+
+3. **錯誤處理改善 (Error Handling)**
+   - 統一的錯誤處理機制
+   - 更詳細的錯誤訊息
+   - 完整的 try-catch 覆蓋
+   - 連線測試超時處理優化
+
+4. **程式碼品質提升 (Code Quality)**
+   - 新增 `utils.js` 共用工具模組
+   - 移除 magic numbers，使用常數定義
+   - 修復事件監聽器記憶體洩漏問題
+   - 改善 loading 狀態管理
+   - 統一的 Toast 通知管理
+
+5. **新增工具函數 (New Utilities)**
+   - `ToastManager`: 統一的通知管理
+   - `LoadingManager`: 載入狀態管理
+   - `PerformanceMonitor`: 效能監控
+   - `debounce/throttle`: 函數節流
+   - `retryOperation`: 重試機制
+   - `escapeHtml`: XSS 防護
+
 ### 2026-01-15
 
 #### 修復問題 (Bug Fixes)
@@ -185,10 +226,13 @@ proxy/
 ├── background/                      # Service worker
 │   └── service-worker.js
 └── scripts/                         # Shared modules
-    ├── storage.js
-    ├── proxy-manager.js
-    ├── constants.js
-    └── i18n.js                      # i18n helper functions
+    ├── storage.js                   # Storage abstraction layer
+    ├── proxy-manager.js             # Proxy management logic
+    ├── constants.js                 # Constants and configuration
+    ├── i18n.js                      # i18n helper functions
+    ├── logger.js                    # Logging utilities
+    ├── utils.js                     # Common utility functions
+    └── omega-parser.js              # Omega format parser
 ```
 
 ## Architecture
@@ -293,6 +337,40 @@ Domains in the bypass list will connect directly without using the proxy. Exampl
 - `chrome.runtime` - Message passing
 - `chrome.action` - Badge updates
 - `chrome.i18n` - Internationalization
+
+### Code Quality & Security
+
+#### Performance Optimizations
+- **Caching**: Config cache with 5-second TTL to reduce storage reads
+- **Batch DOM Operations**: Using DocumentFragment for efficient rendering
+- **Retry Mechanism**: Automatic retry for transient network errors
+- **Memory Management**: Proper cleanup of event listeners on unload
+
+#### Security Features
+- **XSS Protection**: All user inputs are sanitized using `escapeHtml()`
+- **Input Validation**:
+  - Port range: 1-65535
+  - Host format: Valid IP or domain name
+  - PAC script size: Max 1MB
+  - Proxy name length: Max 100 characters
+  - Bypass list: Max 100 entries
+- **Injection Prevention**: PAC scripts checked for malicious content
+
+#### Error Handling
+- Comprehensive try-catch blocks throughout
+- Detailed error messages for debugging
+- Graceful degradation on failures
+- Connection timeout handling
+
+#### Utility Functions
+Located in `scripts/utils.js`:
+- `ToastManager`: Unified notification system
+- `LoadingManager`: Loading state management
+- `PerformanceMonitor`: Performance tracking
+- `debounce/throttle`: Function rate limiting
+- `retryOperation`: Automatic retry logic
+- `escapeHtml`: XSS protection
+- `sanitizeInput`: Input sanitization
 
 ## Internationalization (i18n)
 

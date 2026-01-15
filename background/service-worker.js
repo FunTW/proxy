@@ -3,9 +3,11 @@ import {
   BADGE_COLORS,
   BADGE_TEXT,
   CONNECTION_TEST_TIMEOUT,
-  TEST_URL
+  TEST_URL,
+  CACHE_TIMEOUT
 } from '../scripts/constants.js';
 import { logger } from '../scripts/logger.js';
+import { retryOperation } from '../scripts/utils.js';
 
 import {
   getProxyConfigs,
@@ -30,9 +32,28 @@ import {
   formatProxyAddress
 } from '../scripts/proxy-manager.js';
 
-/**
- * Background service worker for proxy management
- */
+const proxyConfigCache = new Map();
+const cacheTimestamps = new Map();
+
+function getCachedConfig(configId) {
+  const timestamp = cacheTimestamps.get(configId);
+  if (!timestamp || Date.now() - timestamp > CACHE_TIMEOUT) {
+    proxyConfigCache.delete(configId);
+    cacheTimestamps.delete(configId);
+    return null;
+  }
+  return proxyConfigCache.get(configId);
+}
+
+function setCachedConfig(configId, config) {
+  proxyConfigCache.set(configId, config);
+  cacheTimestamps.set(configId, Date.now());
+}
+
+function clearConfigCache() {
+  proxyConfigCache.clear();
+  cacheTimestamps.clear();
+}
 
 // Initialize on install
 chrome.runtime.onInstalled.addListener(async () => {
@@ -64,7 +85,15 @@ async function applyProxyConfig(configId) {
   logger.log('[Service Worker] applyProxyConfig called with ID:', configId);
   
   try {
-    const config = await getProxyConfigById(configId);
+    let config = getCachedConfig(configId);
+    
+    if (!config) {
+      config = await getProxyConfigById(configId);
+      if (config) {
+        setCachedConfig(configId, config);
+      }
+    }
+    
     logger.log('[Service Worker] Config retrieved:', config);
 
     if (!config) {
@@ -72,7 +101,6 @@ async function applyProxyConfig(configId) {
       return { success: false, error: 'Configuration not found' };
     }
 
-    // Validate configuration
     const validation = validateProxyConfig(config);
     logger.log('[Service Worker] Validation result:', validation);
     
@@ -81,20 +109,20 @@ async function applyProxyConfig(configId) {
       return { success: false, error: validation.error };
     }
 
-    // Format for chrome.proxy API
     const proxySettings = formatProxyRules(config);
     logger.log('[Service Worker] Proxy settings formatted:', proxySettings);
 
-    // Apply proxy settings
-    await chrome.proxy.settings.set(proxySettings);
+    await retryOperation(async () => {
+      await chrome.proxy.settings.set(proxySettings);
+    });
+    
     logger.log('[Service Worker] Proxy settings applied to Chrome');
 
-    // Update storage
-    await setCurrentProxyId(configId);
-    await updateStatistics(configId);
-
-    // Update badge
-    await updateBadge(config);
+    await Promise.all([
+      setCurrentProxyId(configId),
+      updateStatistics(configId),
+      updateBadge(config)
+    ]);
 
     logger.log('[Service Worker] Proxy applied successfully:', config.name);
 
@@ -109,7 +137,7 @@ async function applyProxyConfig(configId) {
   } catch (error) {
     logger.error('[Service Worker] Error applying proxy:', error);
     await updateBadge(null, true);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message || 'Failed to apply proxy configuration' };
   }
 }
 
@@ -190,6 +218,9 @@ async function getCurrentProxy() {
  * @returns {Promise<Object>} Test result
  */
 async function testProxyConnection(configId) {
+  let controller;
+  let timeoutId;
+  
   try {
     const config = await getProxyConfigById(configId);
 
@@ -197,7 +228,6 @@ async function testProxyConnection(configId) {
       return { success: false, error: 'Configuration not found' };
     }
 
-    // Validate configuration
     const validation = validateProxyConfig(config);
     if (!validation.valid) {
       return { success: false, error: validation.error };
@@ -205,22 +235,22 @@ async function testProxyConnection(configId) {
 
     const startTime = Date.now();
 
-    // Create a test fetch with timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), CONNECTION_TEST_TIMEOUT);
+    controller = new AbortController();
+    timeoutId = setTimeout(() => controller.abort(), CONNECTION_TEST_TIMEOUT);
 
     try {
       const response = await fetch(TEST_URL, {
         signal: controller.signal,
         method: 'HEAD',
-        cache: 'no-cache'
+        cache: 'no-cache',
+        mode: 'no-cors'
       });
 
       clearTimeout(timeoutId);
 
       const latency = Date.now() - startTime;
 
-      if (response.ok) {
+      if (response.ok || response.type === 'opaque') {
         return {
           success: true,
           data: {
@@ -236,7 +266,7 @@ async function testProxyConnection(configId) {
         };
       }
     } catch (fetchError) {
-      clearTimeout(timeoutId);
+      if (timeoutId) clearTimeout(timeoutId);
 
       if (fetchError.name === 'AbortError') {
         return {
@@ -251,8 +281,9 @@ async function testProxyConnection(configId) {
       };
     }
   } catch (error) {
+    if (timeoutId) clearTimeout(timeoutId);
     logger.error('Error testing connection:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message || 'Connection test failed' };
   }
 }
 
@@ -285,28 +316,38 @@ async function updateBadge(config, error = false) {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   logger.log('Received message:', message.type);
 
-  // Handle different message types
+  const handleAsync = async (handler) => {
+    try {
+      const result = await handler();
+      sendResponse(result);
+    } catch (error) {
+      logger.error('Message handler error:', error);
+      sendResponse({ success: false, error: error.message || 'Internal error' });
+    }
+  };
+
   switch (message.type) {
     case MESSAGE_TYPES.GET_STATUS:
-      getCurrentProxy().then(sendResponse);
-      return true; // Async response
+      handleAsync(() => getCurrentProxy());
+      return true;
 
     case MESSAGE_TYPES.APPLY_PROXY:
-      if (!message.data || !message.data.configId) {
+      if (!message.data?.configId) {
         sendResponse({ success: false, error: 'Config ID required' });
         return false;
       }
-      applyProxyConfig(message.data.configId).then(sendResponse);
+      handleAsync(() => applyProxyConfig(message.data.configId));
       return true;
 
     case MESSAGE_TYPES.DISABLE_PROXY:
-      clearProxy().then(sendResponse);
+      handleAsync(() => clearProxy());
       return true;
 
     case MESSAGE_TYPES.GET_CONFIGS:
-      getProxyConfigs()
-        .then(configs => sendResponse({ success: true, data: configs }))
-        .catch(error => sendResponse({ success: false, error: error.message }));
+      handleAsync(async () => {
+        const configs = await getProxyConfigs();
+        return { success: true, data: configs };
+      });
       return true;
 
     case MESSAGE_TYPES.SAVE_CONFIG:
@@ -314,93 +355,83 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ success: false, error: 'Configuration data required' });
         return false;
       }
+      handleAsync(async () => {
+        const config = createProxyConfig(message.data);
+        const validation = validateProxyConfig(config);
 
-      (async () => {
-        try {
-          const config = createProxyConfig(message.data);
-          const validation = validateProxyConfig(config);
-
-          if (!validation.valid) {
-            sendResponse({ success: false, error: validation.error });
-            return;
-          }
-
-          await saveProxyConfig(config);
-          sendResponse({ success: true, data: config });
-        } catch (error) {
-          sendResponse({ success: false, error: error.message });
+        if (!validation.valid) {
+          return { success: false, error: validation.error };
         }
-      })();
+
+        await saveProxyConfig(config);
+        clearConfigCache();
+        return { success: true, data: config };
+      });
       return true;
 
     case MESSAGE_TYPES.UPDATE_CONFIG:
-      if (!message.data || !message.data.id) {
+      if (!message.data?.id) {
         sendResponse({ success: false, error: 'Config ID required' });
         return false;
       }
+      handleAsync(async () => {
+        const validation = validateProxyConfig(message.data);
 
-      (async () => {
-        try {
-          const validation = validateProxyConfig(message.data);
-
-          if (!validation.valid) {
-            sendResponse({ success: false, error: validation.error });
-            return;
-          }
-
-          const success = await updateProxyConfig(message.data.id, message.data);
-
-          if (success) {
-            // If updating the currently active proxy, reapply it
-            const currentId = await getCurrentProxyId();
-            if (currentId === message.data.id) {
-              await applyProxyConfig(currentId);
-            }
-            sendResponse({ success: true, data: message.data });
-          } else {
-            sendResponse({ success: false, error: 'Configuration not found' });
-          }
-        } catch (error) {
-          sendResponse({ success: false, error: error.message });
+        if (!validation.valid) {
+          return { success: false, error: validation.error };
         }
-      })();
+
+        const success = await updateProxyConfig(message.data.id, message.data);
+
+        if (success) {
+          clearConfigCache();
+          const currentId = await getCurrentProxyId();
+          if (currentId === message.data.id) {
+            await applyProxyConfig(currentId);
+          }
+          return { success: true, data: message.data };
+        } else {
+          return { success: false, error: 'Configuration not found' };
+        }
+      });
       return true;
 
     case MESSAGE_TYPES.DELETE_CONFIG:
-      if (!message.data || !message.data.configId) {
+      if (!message.data?.configId) {
         sendResponse({ success: false, error: 'Config ID required' });
         return false;
       }
-
-      deleteProxyConfig(message.data.configId)
-        .then(success => {
-          if (success) {
-            sendResponse({ success: true, data: { message: 'Configuration deleted' } });
-          } else {
-            sendResponse({ success: false, error: 'Configuration not found' });
-          }
-        })
-        .catch(error => sendResponse({ success: false, error: error.message }));
+      handleAsync(async () => {
+        const success = await deleteProxyConfig(message.data.configId);
+        clearConfigCache();
+        if (success) {
+          return { success: true, data: { message: 'Configuration deleted' } };
+        } else {
+          return { success: false, error: 'Configuration not found' };
+        }
+      });
       return true;
 
     case MESSAGE_TYPES.TEST_CONNECTION:
-      if (!message.data || !message.data.configId) {
+      if (!message.data?.configId) {
         sendResponse({ success: false, error: 'Config ID required' });
         return false;
       }
-      testProxyConnection(message.data.configId).then(sendResponse);
+      handleAsync(() => testProxyConnection(message.data.configId));
       return true;
 
     case MESSAGE_TYPES.GET_STATISTICS:
-      getStatistics()
-        .then(stats => sendResponse({ success: true, data: stats }))
-        .catch(error => sendResponse({ success: false, error: error.message }));
+      handleAsync(async () => {
+        const stats = await getStatistics();
+        return { success: true, data: stats };
+      });
       return true;
 
     case MESSAGE_TYPES.CLEAR_STATISTICS:
-      clearStatistics()
-        .then(() => sendResponse({ success: true, data: { message: 'Statistics cleared' } }))
-        .catch(error => sendResponse({ success: false, error: error.message }));
+      handleAsync(async () => {
+        await clearStatistics();
+        return { success: true, data: { message: 'Statistics cleared' } };
+      });
       return true;
 
     default:

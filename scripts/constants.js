@@ -74,5 +74,25 @@ export const TEST_URL = 'https://www.google.com';
 // Default color for new proxy configs
 export const DEFAULT_PROXY_COLOR = '#2196F3';
 
+// Toast notification timeout (ms)
+export const TOAST_TIMEOUT = 3000;
+
+// Maximum proxy name length
+export const MAX_PROXY_NAME_LENGTH = 100;
+
+// Port number constraints
+export const PORT_MIN = 1;
+export const PORT_MAX = 65535;
+
+// Cache timeout (ms)
+export const CACHE_TIMEOUT = 5000;
+
+// Maximum PAC script size (bytes)
+export const MAX_PAC_SCRIPT_SIZE = 1048576; // 1MB
+
+// Retry configuration
+export const MAX_RETRY_ATTEMPTS = 3;
+export const RETRY_DELAY = 1000;
+
 // Debug mode (set to false in production)
 export const DEBUG_MODE = false;

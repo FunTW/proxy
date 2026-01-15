@@ -7,12 +7,8 @@ import {
 import { exportAllData, importData } from '../scripts/storage.js';
 import { initializeI18n, getMessage as t } from '../scripts/i18n.js';
 import { logger } from '../scripts/logger.js';
+import { ToastManager, escapeHtml } from '../scripts/utils.js';
 
-/**
- * Options page controller
- */
-
-// DOM elements
 let proxyListSidebar, emptyState, formSection, proxyForm, statisticsSection;
 let configIdField, proxyNameField, proxyTypeField, proxyHostField, proxyPortField;
 let bypassListField, pacScriptField, proxyColorField;
@@ -21,101 +17,125 @@ let addProxyBtn, cancelFormBtn, cancelBtn, testBtn, deleteBtn, exportBtn, import
 let formTitle, statisticsContainer, toast, loadTemplateBtn, versionInfo, clearStatisticsBtn;
 let confirmModal, confirmModalTitle, confirmModalMessage, confirmModalCancel, confirmModalConfirm;
 
-// State
 let proxyConfigs = [];
 let currentStatus = null;
 let statistics = null;
 let editingConfigId = null;
 let selectedConfigId = null;
+let toastManager = null;
+let storageChangeListener = null;
+let proxyListClickHandler = null;
+let confirmModalClickHandler = null;
 
 /**
  * Initialize options page
  */
 document.addEventListener('DOMContentLoaded', async () => {
-  // Initialize i18n
-  initializeI18n();
+  try {
+    initializeI18n();
 
-  // Get DOM elements
-  proxyListSidebar = document.getElementById('proxyListSidebar');
-  emptyState = document.getElementById('emptyState');
-  formSection = document.getElementById('formSection');
-  statisticsSection = document.getElementById('statisticsSection');
-  proxyForm = document.getElementById('proxyForm');
-  formTitle = document.getElementById('formTitle');
+    proxyListSidebar = document.getElementById('proxyListSidebar');
+    emptyState = document.getElementById('emptyState');
+    formSection = document.getElementById('formSection');
+    statisticsSection = document.getElementById('statisticsSection');
+    proxyForm = document.getElementById('proxyForm');
+    formTitle = document.getElementById('formTitle');
 
-  configIdField = document.getElementById('configId');
-  proxyNameField = document.getElementById('proxyName');
-  proxyTypeField = document.getElementById('proxyType');
-  proxyHostField = document.getElementById('proxyHost');
-  proxyPortField = document.getElementById('proxyPort');
-  bypassListField = document.getElementById('bypassList');
-  pacScriptField = document.getElementById('pacScript');
-  proxyColorField = document.getElementById('proxyColor');
+    configIdField = document.getElementById('configId');
+    proxyNameField = document.getElementById('proxyName');
+    proxyTypeField = document.getElementById('proxyType');
+    proxyHostField = document.getElementById('proxyHost');
+    proxyPortField = document.getElementById('proxyPort');
+    bypassListField = document.getElementById('bypassList');
+    pacScriptField = document.getElementById('pacScript');
+    proxyColorField = document.getElementById('proxyColor');
 
-  serverFields = document.getElementById('serverFields');
-  pacScriptFieldContainer = document.getElementById('pacScriptField');
+    serverFields = document.getElementById('serverFields');
+    pacScriptFieldContainer = document.getElementById('pacScriptField');
 
-  addProxyBtn = document.getElementById('addProxyBtn');
-  cancelFormBtn = document.getElementById('cancelFormBtn');
-  cancelBtn = document.getElementById('cancelBtn');
-  testBtn = document.getElementById('testBtn');
-  deleteBtn = document.getElementById('deleteBtn');
-  exportBtn = document.getElementById('exportBtn');
-  importBtn = document.getElementById('importBtn');
-  importFile = document.getElementById('importFile');
-  statisticsContainer = document.getElementById('statisticsContainer');
-  toast = document.getElementById('toast');
-  loadTemplateBtn = document.getElementById('loadTemplateBtn');
-  versionInfo = document.getElementById('versionInfo');
-  clearStatisticsBtn = document.getElementById('clearStatisticsBtn');
-  confirmModal = document.getElementById('confirmModal');
-  confirmModalTitle = document.getElementById('confirmModalTitle');
-  confirmModalMessage = document.getElementById('confirmModalMessage');
-  confirmModalCancel = document.getElementById('confirmModalCancel');
-  confirmModalConfirm = document.getElementById('confirmModalConfirm');
+    addProxyBtn = document.getElementById('addProxyBtn');
+    cancelFormBtn = document.getElementById('cancelFormBtn');
+    cancelBtn = document.getElementById('cancelBtn');
+    testBtn = document.getElementById('testBtn');
+    deleteBtn = document.getElementById('deleteBtn');
+    exportBtn = document.getElementById('exportBtn');
+    importBtn = document.getElementById('importBtn');
+    importFile = document.getElementById('importFile');
+    statisticsContainer = document.getElementById('statisticsContainer');
+    toast = document.getElementById('toast');
+    loadTemplateBtn = document.getElementById('loadTemplateBtn');
+    versionInfo = document.getElementById('versionInfo');
+    clearStatisticsBtn = document.getElementById('clearStatisticsBtn');
+    confirmModal = document.getElementById('confirmModal');
+    confirmModalTitle = document.getElementById('confirmModalTitle');
+    confirmModalMessage = document.getElementById('confirmModalMessage');
+    confirmModalCancel = document.getElementById('confirmModalCancel');
+    confirmModalConfirm = document.getElementById('confirmModalConfirm');
 
-  // Display version
-  displayVersion();
+    toastManager = new ToastManager(toast);
 
-  // Set up event listeners
-  addProxyBtn.addEventListener('click', showAddForm);
-  cancelFormBtn.addEventListener('click', hideForm);
-  cancelBtn.addEventListener('click', hideForm);
-  testBtn.addEventListener('click', handleTestCurrent);
-  deleteBtn.addEventListener('click', handleDeleteCurrent);
-  proxyForm.addEventListener('submit', handleFormSubmit);
-  proxyTypeField.addEventListener('change', handleTypeChange);
-  exportBtn.addEventListener('click', handleExport);
-  importBtn.addEventListener('click', () => importFile.click());
-  importFile.addEventListener('change', handleImport);
-  loadTemplateBtn.addEventListener('click', loadPACTemplate);
-  clearStatisticsBtn.addEventListener('click', handleClearStatistics);
-  confirmModalCancel.addEventListener('click', hideConfirmModal);
-  confirmModal.addEventListener('click', (e) => {
-    if (e.target === confirmModal) {
-      hideConfirmModal();
-    }
-  });
+    displayVersion();
 
-  // Listen for storage changes
-  chrome.storage.onChanged.addListener(handleStorageChange);
-  
-  // Use event delegation for proxy list items
-  proxyListSidebar.addEventListener('click', (e) => {
-    const item = e.target.closest('.proxy-list-item');
-    if (!item) return;
+    addProxyBtn.addEventListener('click', showAddForm);
+    cancelFormBtn.addEventListener('click', hideForm);
+    cancelBtn.addEventListener('click', hideForm);
+    testBtn.addEventListener('click', handleTestCurrent);
+    deleteBtn.addEventListener('click', handleDeleteCurrent);
+    proxyForm.addEventListener('submit', handleFormSubmit);
+    proxyTypeField.addEventListener('change', handleTypeChange);
+    exportBtn.addEventListener('click', handleExport);
+    importBtn.addEventListener('click', () => importFile.click());
+    importFile.addEventListener('change', handleImport);
+    loadTemplateBtn.addEventListener('click', loadPACTemplate);
+    clearStatisticsBtn.addEventListener('click', handleClearStatistics);
+    confirmModalCancel.addEventListener('click', hideConfirmModal);
     
-    const configId = item.dataset.configId;
-    if (!configId) return;
-    
-    const config = proxyConfigs.find(c => c.id === configId);
-    if (config) {
-      showProxyDetail(config);
-    }
-  });
+    confirmModalClickHandler = (e) => {
+      if (e.target === confirmModal) {
+        hideConfirmModal();
+      }
+    };
+    confirmModal.addEventListener('click', confirmModalClickHandler);
 
-  // Load initial data
-  await loadData();
+    storageChangeListener = handleStorageChange;
+    chrome.storage.onChanged.addListener(storageChangeListener);
+    
+    proxyListClickHandler = (e) => {
+      const item = e.target.closest('.proxy-list-item');
+      if (!item) return;
+      
+      const configId = item.dataset.configId;
+      if (!configId) return;
+      
+      const config = proxyConfigs.find(c => c.id === configId);
+      if (config) {
+        showProxyDetail(config);
+      }
+    };
+    proxyListSidebar.addEventListener('click', proxyListClickHandler);
+
+    await loadData();
+  } catch (error) {
+    logger.error('[Options] Initialization error:', error);
+    if (toastManager) {
+      toastManager.show(t('errorFailedToLoad'), 'error');
+    }
+  }
+});
+
+window.addEventListener('unload', () => {
+  if (storageChangeListener) {
+    chrome.storage.onChanged.removeListener(storageChangeListener);
+  }
+  if (proxyListClickHandler && proxyListSidebar) {
+    proxyListSidebar.removeEventListener('click', proxyListClickHandler);
+  }
+  if (confirmModalClickHandler && confirmModal) {
+    confirmModal.removeEventListener('click', confirmModalClickHandler);
+  }
+  if (toastManager) {
+    toastManager.destroy();
+  }
 });
 
 /**
@@ -230,29 +250,25 @@ function createProxyListItem(config) {
   item.className = 'proxy-list-item';
   item.dataset.configId = config.id;
 
-  // Check if active
   const isActive = currentStatus?.isActive && currentStatus?.proxy?.id === config.id;
   if (isActive) {
     item.classList.add('active');
   }
 
-  // Check if selected
   if (selectedConfigId === config.id) {
     item.classList.add('selected');
   }
 
-  // Color bar
   const colorBar = document.createElement('div');
   colorBar.className = 'proxy-list-item-color';
-  colorBar.style.backgroundColor = config.color;
+  colorBar.style.backgroundColor = config.color || '#2196F3';
 
-  // Info
   const info = document.createElement('div');
   info.className = 'proxy-list-item-info';
 
   const name = document.createElement('div');
   name.className = 'proxy-list-item-name';
-  name.textContent = config.name;
+  name.textContent = escapeHtml(config.name);
 
   const type = document.createElement('div');
   type.className = 'proxy-list-item-type';
@@ -264,7 +280,6 @@ function createProxyListItem(config) {
   item.appendChild(colorBar);
   item.appendChild(info);
 
-  // Active badge
   if (isActive) {
     const badge = document.createElement('div');
     badge.className = 'proxy-list-item-badge';
@@ -607,15 +622,13 @@ function renderStatistics() {
     return;
   }
 
-  // Calculate max connections for bar sizing
   const maxConnections = Math.max(...Object.values(statistics.byProxy).map(s => s.connections));
 
-  // Use DocumentFragment for better performance
   const fragment = document.createDocumentFragment();
   
   Object.entries(statistics.byProxy).forEach(([proxyId, stat]) => {
     const config = proxyConfigs.find(c => c.id === proxyId);
-    const proxyName = config ? config.name : 'Unknown Proxy';
+    const proxyName = config ? escapeHtml(config.name) : 'Unknown Proxy';
     const percentage = maxConnections > 0 ? (stat.connections / maxConnections) * 100 : 0;
 
     const statItem = document.createElement('div');
@@ -629,12 +642,13 @@ function renderStatistics() {
     barDiv.className = 'stat-bar';
     const fillDiv = document.createElement('div');
     fillDiv.className = 'stat-bar-fill';
-    fillDiv.style.width = `${percentage}%`;
+    fillDiv.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
     barDiv.appendChild(fillDiv);
     
     const valueDiv = document.createElement('div');
     valueDiv.className = 'stat-value';
-    valueDiv.textContent = `${stat.connections} ${t('statisticsConnections')}`;
+    const connections = parseInt(stat.connections) || 0;
+    valueDiv.textContent = `${connections} ${t('statisticsConnections')}`;
     
     statItem.appendChild(nameDiv);
     statItem.appendChild(barDiv);
@@ -647,38 +661,31 @@ function renderStatistics() {
   statisticsContainer.appendChild(fragment);
 }
 
-/**
- * Escape HTML to prevent XSS
- */
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-/**
- * Show confirmation modal
- * @param {string} message - Confirmation message
- * @param {Function} onConfirm - Callback when confirmed
- */
 function showConfirmModal(message, onConfirm) {
-  confirmModalMessage.textContent = message;
+  confirmModalMessage.textContent = escapeHtml(message);
   confirmModal.style.display = 'flex';
   
   const handleConfirm = () => {
     hideConfirmModal();
-    onConfirm();
+    if (typeof onConfirm === 'function') {
+      onConfirm();
+    }
   };
   
-  confirmModalConfirm.onclick = handleConfirm;
+  if (confirmModalConfirm._currentHandler) {
+    confirmModalConfirm.removeEventListener('click', confirmModalConfirm._currentHandler);
+  }
+  
+  confirmModalConfirm._currentHandler = handleConfirm;
+  confirmModalConfirm.addEventListener('click', handleConfirm);
 }
 
-/**
- * Hide confirmation modal
- */
 function hideConfirmModal() {
   confirmModal.style.display = 'none';
-  confirmModalConfirm.onclick = null;
+  if (confirmModalConfirm._currentHandler) {
+    confirmModalConfirm.removeEventListener('click', confirmModalConfirm._currentHandler);
+    confirmModalConfirm._currentHandler = null;
+  }
 }
 
 /**
@@ -715,16 +722,10 @@ function handleStorageChange(changes, area) {
   }
 }
 
-/**
- * Show toast notification
- */
 function showToast(message, type = 'success') {
-  toast.textContent = message;
-  toast.className = `toast ${type} show`;
-
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
+  if (toastManager) {
+    toastManager.show(message, type);
+  }
 }
 
 /**

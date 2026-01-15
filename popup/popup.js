@@ -2,18 +2,16 @@ import { MESSAGE_TYPES } from '../scripts/constants.js';
 import { getProxyTypeDisplayName, formatProxyAddress } from '../scripts/proxy-manager.js';
 import { initializeI18n, getMessage as t } from '../scripts/i18n.js';
 import { logger } from '../scripts/logger.js';
+import { LoadingManager, escapeHtml } from '../scripts/utils.js';
 
-/**
- * Popup UI controller
- */
-
-// DOM elements
 let statusDot, statusText, currentProxyName, currentProxyAddress;
 let disconnectBtn, refreshBtn, settingsBtn, proxyList, emptyState, versionInfo;
 
-// State
 let currentStatus = null;
 let proxyConfigs = [];
+let loadingManager = new LoadingManager();
+let storageChangeListener = null;
+let proxyListClickHandler = null;
 
 /**
  * Initialize popup
@@ -21,54 +19,65 @@ let proxyConfigs = [];
 document.addEventListener('DOMContentLoaded', async () => {
   logger.log('[Popup] DOMContentLoaded - Initializing popup');
   
-  // Initialize i18n
-  initializeI18n();
+  try {
+    initializeI18n();
 
-  // Get DOM elements
-  statusDot = document.getElementById('statusDot');
-  statusText = document.getElementById('statusText');
-  currentProxyName = document.getElementById('currentProxyName');
-  currentProxyAddress = document.getElementById('currentProxyAddress');
-  disconnectBtn = document.getElementById('disconnectBtn');
-  refreshBtn = document.getElementById('refreshBtn');
-  settingsBtn = document.getElementById('settingsBtn');
-  proxyList = document.getElementById('proxyList');
-  emptyState = document.getElementById('emptyState');
-  versionInfo = document.getElementById('versionInfo');
+    statusDot = document.getElementById('statusDot');
+    statusText = document.getElementById('statusText');
+    currentProxyName = document.getElementById('currentProxyName');
+    currentProxyAddress = document.getElementById('currentProxyAddress');
+    disconnectBtn = document.getElementById('disconnectBtn');
+    refreshBtn = document.getElementById('refreshBtn');
+    settingsBtn = document.getElementById('settingsBtn');
+    proxyList = document.getElementById('proxyList');
+    emptyState = document.getElementById('emptyState');
+    versionInfo = document.getElementById('versionInfo');
 
-  logger.log('[Popup] DOM elements retrieved');
+    logger.log('[Popup] DOM elements retrieved');
 
-  // Display version
-  displayVersion();
+    displayVersion();
 
-  // Set up event listeners
-  disconnectBtn.addEventListener('click', handleDisconnect);
-  refreshBtn.addEventListener('click', handleRefresh);
-  settingsBtn.addEventListener('click', openSettings);
-  
-  // Use event delegation for proxy list items
-  proxyList.addEventListener('click', (e) => {
-    const item = e.target.closest('.proxy-item');
-    if (!item) return;
+    disconnectBtn.addEventListener('click', handleDisconnect);
+    refreshBtn.addEventListener('click', handleRefresh);
+    settingsBtn.addEventListener('click', openSettings);
     
-    const configId = item.dataset.configId;
-    if (!configId) return;
+    proxyListClickHandler = (e) => {
+      const item = e.target.closest('.proxy-item');
+      if (!item) return;
+      
+      const configId = item.dataset.configId;
+      if (!configId) return;
+      
+      const config = proxyConfigs.find(c => c.id === configId);
+      if (config) {
+        handleProxyClick(config);
+      }
+    };
     
-    const config = proxyConfigs.find(c => c.id === configId);
-    if (config) {
-      handleProxyClick(config);
-    }
-  });
+    proxyList.addEventListener('click', proxyListClickHandler);
 
-  logger.log('[Popup] Event listeners set up');
+    logger.log('[Popup] Event listeners set up');
 
-  // Listen for storage changes
-  chrome.storage.onChanged.addListener(handleStorageChange);
+    storageChangeListener = handleStorageChange;
+    chrome.storage.onChanged.addListener(storageChangeListener);
 
-  // Load initial data
-  logger.log('[Popup] Loading initial data');
-  await loadData();
-  logger.log('[Popup] Initialization complete');
+    logger.log('[Popup] Loading initial data');
+    await loadData();
+    logger.log('[Popup] Initialization complete');
+  } catch (error) {
+    logger.error('[Popup] Initialization error:', error);
+    showError(t('errorFailedToLoad'));
+  }
+});
+
+window.addEventListener('unload', () => {
+  if (storageChangeListener) {
+    chrome.storage.onChanged.removeListener(storageChangeListener);
+  }
+  if (proxyListClickHandler && proxyList) {
+    proxyList.removeEventListener('click', proxyListClickHandler);
+  }
+  loadingManager.clear();
 });
 
 /**
@@ -131,15 +140,13 @@ async function loadProxyList() {
  * Update status UI
  */
 function updateStatusUI(status) {
-  if (status.isActive && status.proxy) {
-    // Proxy is active
+  if (status?.isActive && status.proxy) {
     statusDot.className = 'status-dot active';
     statusText.textContent = t('statusConnected');
-    currentProxyName.textContent = status.proxy.name;
-    currentProxyAddress.textContent = status.proxy.address;
+    currentProxyName.textContent = escapeHtml(status.proxy.name);
+    currentProxyAddress.textContent = escapeHtml(status.proxy.address);
     disconnectBtn.disabled = false;
   } else {
-    // No proxy active
     statusDot.className = 'status-dot';
     statusText.textContent = t('statusDisconnected');
     currentProxyName.textContent = t('currentProxyNone');
@@ -188,24 +195,21 @@ function createProxyItem(config) {
   item.className = 'proxy-item';
   item.dataset.configId = config.id;
 
-  // Check if this is the active proxy
   const isActive = currentStatus?.isActive && currentStatus?.proxy?.id === config.id;
   if (isActive) {
     item.classList.add('active');
   }
 
-  // Color bar
   const colorBar = document.createElement('div');
   colorBar.className = 'proxy-item-color';
-  colorBar.style.backgroundColor = config.color;
+  colorBar.style.backgroundColor = config.color || '#2196F3';
 
-  // Info container
   const info = document.createElement('div');
   info.className = 'proxy-item-info';
 
   const name = document.createElement('div');
   name.className = 'proxy-item-name';
-  name.textContent = config.name;
+  name.textContent = escapeHtml(config.name);
 
   const details = document.createElement('div');
   details.className = 'proxy-item-details';
@@ -214,7 +218,6 @@ function createProxyItem(config) {
   info.appendChild(name);
   info.appendChild(details);
 
-  // Active badge
   if (isActive) {
     const badge = document.createElement('div');
     badge.className = 'proxy-item-badge';
@@ -236,14 +239,18 @@ function createProxyItem(config) {
 async function handleProxyClick(config) {
   logger.log('[Popup] Proxy item clicked:', config.name, config.id);
   
-  // If already active, do nothing
   if (currentStatus?.isActive && currentStatus?.proxy?.id === config.id) {
     logger.log('[Popup] Proxy already active, ignoring click');
     return;
   }
 
+  if (loadingManager.isLoading('applyProxy')) {
+    logger.log('[Popup] Already applying proxy, ignoring click');
+    return;
+  }
+
   try {
-    // Show loading state
+    loadingManager.start('applyProxy');
     statusText.textContent = t('statusConnecting');
     logger.log('[Popup] Sending APPLY_PROXY message');
 
@@ -254,20 +261,21 @@ async function handleProxyClick(config) {
 
     logger.log('[Popup] APPLY_PROXY response:', response);
 
-    if (response.success) {
+    if (response?.success) {
       logger.log('[Popup] Proxy applied successfully');
-      // Reload status
       await loadProxyStatus();
       renderProxyList();
     } else {
-      logger.error('[Popup] Failed to apply proxy:', response.error);
-      showError(response.error || t('errorFailedToApply'));
+      logger.error('[Popup] Failed to apply proxy:', response?.error);
+      showError(response?.error || t('errorFailedToApply'));
       await loadProxyStatus();
     }
   } catch (error) {
     logger.error('[Popup] Error applying proxy:', error);
     showError(t('errorFailedToApply'));
     await loadProxyStatus();
+  } finally {
+    loadingManager.stop('applyProxy');
   }
 }
 

@@ -1,8 +1,15 @@
-import { PROXY_TYPES, PROXY_MODES, DEFAULT_BYPASS_LIST, DEFAULT_PROXY_COLOR } from './constants.js';
-
-/**
- * Proxy management logic and utilities
- */
+import { 
+  PROXY_TYPES, 
+  PROXY_MODES, 
+  DEFAULT_BYPASS_LIST, 
+  DEFAULT_PROXY_COLOR,
+  MAX_PROXY_NAME_LENGTH,
+  PORT_MIN,
+  PORT_MAX,
+  MAX_PAC_SCRIPT_SIZE
+} from './constants.js';
+import { sanitizeInput } from './utils.js';
+import { logger } from './logger.js';
 
 /**
  * Create a new proxy configuration object
@@ -10,13 +17,18 @@ import { PROXY_TYPES, PROXY_MODES, DEFAULT_BYPASS_LIST, DEFAULT_PROXY_COLOR } fr
  * @returns {Object} Complete proxy configuration
  */
 export function createProxyConfig(data) {
+  const name = sanitizeInput(data.name || 'Untitled Proxy', MAX_PROXY_NAME_LENGTH);
+  const host = sanitizeInput(data.host || '', 255);
+  
   return {
     id: crypto.randomUUID(),
-    name: data.name || 'Untitled Proxy',
+    name: name.trim() || 'Untitled Proxy',
     type: data.type || PROXY_TYPES.HTTP,
-    host: data.host || '',
-    port: data.port || 8080,
-    bypassList: data.bypassList || [...DEFAULT_BYPASS_LIST],
+    host: host.trim(),
+    port: parseInt(data.port) || 8080,
+    bypassList: Array.isArray(data.bypassList) 
+      ? data.bypassList.map(d => sanitizeInput(d, 255).trim()).filter(d => d)
+      : [...DEFAULT_BYPASS_LIST],
     pacScript: data.pacScript || '',
     isActive: false,
     createdAt: new Date().toISOString(),
@@ -31,105 +43,115 @@ export function createProxyConfig(data) {
  * @returns {Object} Validation result { valid: boolean, error: string }
  */
 export function validateProxyConfig(config) {
-  // Check required fields
-  if (!config || typeof config !== 'object') {
-    return { valid: false, error: 'Invalid configuration object' };
-  }
-  
-  if (!config.name || typeof config.name !== 'string' || config.name.trim() === '') {
-    return { valid: false, error: 'Proxy name is required' };
-  }
-  
-  // Validate name length
-  if (config.name.trim().length > 100) {
-    return { valid: false, error: 'Proxy name must be 100 characters or less' };
-  }
-
-  if (!config.type || typeof config.type !== 'string') {
-    return { valid: false, error: 'Proxy type is required' };
-  }
-  
-  // Validate proxy type
-  const validTypes = Object.values(PROXY_TYPES);
-  if (!validTypes.includes(config.type)) {
-    return { valid: false, error: 'Invalid proxy type' };
-  }
-
-  // Validate based on proxy type
-  if (config.type === PROXY_TYPES.PAC) {
-    if (!config.pacScript || config.pacScript.trim() === '') {
-      return { valid: false, error: 'PAC script is required for PAC type' };
+  try {
+    if (!config || typeof config !== 'object') {
+      return { valid: false, error: 'Invalid configuration object' };
     }
     
-    // Enhanced PAC script validation
-    const script = config.pacScript.trim();
-    if (!script.includes('FindProxyForURL')) {
-      return { valid: false, error: 'PAC script must contain FindProxyForURL function' };
+    if (!config.name || typeof config.name !== 'string' || config.name.trim() === '') {
+      return { valid: false, error: 'Proxy name is required' };
     }
     
-    // Check for function signature
-    const functionPattern = /function\s+FindProxyForURL\s*\(/;
-    if (!functionPattern.test(script)) {
-      return { valid: false, error: 'PAC script must have function FindProxyForURL(url, host)' };
-    }
-    
-    // Check for balanced braces
-    const openBraces = (script.match(/\{/g) || []).length;
-    const closeBraces = (script.match(/\}/g) || []).length;
-    if (openBraces !== closeBraces) {
-      return { valid: false, error: 'PAC script has unmatched braces' };
-    }
-  } else if (config.type === PROXY_TYPES.AUTO_DETECT || config.type === PROXY_TYPES.DIRECT) {
-    // No host/port validation needed for auto-detect or direct
-    return { valid: true, error: null };
-  } else {
-    // For HTTP, HTTPS, SOCKS4, SOCKS5
-    if (!config.host || config.host.trim() === '') {
-      return { valid: false, error: 'Proxy host is required' };
+    if (config.name.trim().length > MAX_PROXY_NAME_LENGTH) {
+      return { valid: false, error: `Proxy name must be ${MAX_PROXY_NAME_LENGTH} characters or less` };
     }
 
-    // Validate host format (enhanced check)
-    const host = config.host.trim();
+    if (!config.type || typeof config.type !== 'string') {
+      return { valid: false, error: 'Proxy type is required' };
+    }
     
-    // Check for valid domain name or IP
-    const domainPattern = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
-    const hostnamePattern = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
-    const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
-    
-    // Validate IP address format more strictly
-    const isValidIP = ipPattern.test(host);
-    if (isValidIP) {
-      const parts = host.split('.');
-      const allValid = parts.every(part => {
-        const num = parseInt(part, 10);
-        return num >= 0 && num <= 255;
-      });
-      if (!allValid) {
-        return { valid: false, error: 'Invalid IP address format' };
+    const validTypes = Object.values(PROXY_TYPES);
+    if (!validTypes.includes(config.type)) {
+      return { valid: false, error: 'Invalid proxy type' };
+    }
+
+    if (config.type === PROXY_TYPES.PAC) {
+      if (!config.pacScript || config.pacScript.trim() === '') {
+        return { valid: false, error: 'PAC script is required for PAC type' };
+      }
+      
+      const script = config.pacScript.trim();
+      
+      if (script.length > MAX_PAC_SCRIPT_SIZE) {
+        return { valid: false, error: `PAC script exceeds maximum size of ${MAX_PAC_SCRIPT_SIZE} bytes` };
+      }
+      
+      if (!script.includes('FindProxyForURL')) {
+        return { valid: false, error: 'PAC script must contain FindProxyForURL function' };
+      }
+      
+      const functionPattern = /function\s+FindProxyForURL\s*\(/;
+      if (!functionPattern.test(script)) {
+        return { valid: false, error: 'PAC script must have function FindProxyForURL(url, host)' };
+      }
+      
+      const openBraces = (script.match(/\{/g) || []).length;
+      const closeBraces = (script.match(/\}/g) || []).length;
+      if (openBraces !== closeBraces) {
+        return { valid: false, error: 'PAC script has unmatched braces' };
+      }
+      
+      if (script.includes('<script>') || script.includes('</script>')) {
+        return { valid: false, error: 'PAC script contains invalid HTML tags' };
+      }
+      
+    } else if (config.type === PROXY_TYPES.AUTO_DETECT || config.type === PROXY_TYPES.DIRECT) {
+      return { valid: true, error: null };
+    } else {
+      if (!config.host || config.host.trim() === '') {
+        return { valid: false, error: 'Proxy host is required' };
+      }
+
+      const host = config.host.trim();
+      
+      if (host.length > 255) {
+        return { valid: false, error: 'Host name is too long (max 255 characters)' };
+      }
+      
+      const domainPattern = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+      const hostnamePattern = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
+      const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+      
+      const isValidIP = ipPattern.test(host);
+      if (isValidIP) {
+        const parts = host.split('.');
+        const allValid = parts.every(part => {
+          const num = parseInt(part, 10);
+          return num >= 0 && num <= 255;
+        });
+        if (!allValid) {
+          return { valid: false, error: 'Invalid IP address format' };
+        }
+      }
+      
+      const isValidDomain = domainPattern.test(host);
+      const isValidHostname = hostnamePattern.test(host);
+      
+      if (!isValidIP && !isValidDomain && !isValidHostname) {
+        return { valid: false, error: 'Invalid host format. Use a valid domain name or IP address' };
+      }
+
+      const port = parseInt(config.port, 10);
+      if (isNaN(port) || port < PORT_MIN || port > PORT_MAX) {
+        return { valid: false, error: `Port must be between ${PORT_MIN} and ${PORT_MAX}` };
+      }
+      
+      if (config.host && typeof config.host === 'string') {
+        config.host = config.host.trim();
       }
     }
-    
-    // Check for valid domain or hostname
-    const isValidDomain = domainPattern.test(host);
-    const isValidHostname = hostnamePattern.test(host);
-    
-    if (!isValidIP && !isValidDomain && !isValidHostname) {
-      return { valid: false, error: 'Invalid host format. Use a valid domain name or IP address' };
+
+    if (config.bypassList && Array.isArray(config.bypassList)) {
+      if (config.bypassList.length > 100) {
+        return { valid: false, error: 'Bypass list is too long (max 100 entries)' };
+      }
     }
 
-    // Validate port
-    const port = parseInt(config.port, 10);
-    if (isNaN(port) || port < 1 || port > 65535) {
-      return { valid: false, error: 'Port must be between 1 and 65535' };
-    }
-    
-    // Ensure host is trimmed
-    if (config.host && typeof config.host === 'string') {
-      config.host = config.host.trim();
-    }
+    return { valid: true, error: null };
+  } catch (error) {
+    logger.error('Error validating proxy config:', error);
+    return { valid: false, error: 'Validation error: ' + error.message };
   }
-
-  return { valid: true, error: null };
 }
 
 /**
@@ -138,53 +160,68 @@ export function validateProxyConfig(config) {
  * @returns {Object} Formatted configuration for chrome.proxy.settings.set
  */
 export function formatProxyRules(config) {
-  if (config.type === PROXY_TYPES.DIRECT) {
-    return {
-      value: {
-        mode: PROXY_MODES.DIRECT
-      },
-      scope: 'regular'
-    };
-  }
+  try {
+    if (!config || !config.type) {
+      throw new Error('Invalid proxy configuration');
+    }
 
-  if (config.type === PROXY_TYPES.AUTO_DETECT) {
-    return {
-      value: {
-        mode: PROXY_MODES.AUTO_DETECT
-      },
-      scope: 'regular'
-    };
-  }
+    if (config.type === PROXY_TYPES.DIRECT) {
+      return {
+        value: {
+          mode: PROXY_MODES.DIRECT
+        },
+        scope: 'regular'
+      };
+    }
 
-  if (config.type === PROXY_TYPES.PAC) {
-    return {
+    if (config.type === PROXY_TYPES.AUTO_DETECT) {
+      return {
+        value: {
+          mode: PROXY_MODES.AUTO_DETECT
+        },
+        scope: 'regular'
+      };
+    }
+
+    if (config.type === PROXY_TYPES.PAC) {
+      if (!config.pacScript) {
+        throw new Error('PAC script is required');
+      }
+      return {
+        value: {
+          mode: PROXY_MODES.PAC_SCRIPT,
+          pacScript: {
+            data: config.pacScript
+          }
+        },
+        scope: 'regular'
+      };
+    }
+
+    if (!config.host || !config.port) {
+      throw new Error('Host and port are required');
+    }
+
+    const proxyConfig = {
       value: {
-        mode: PROXY_MODES.PAC_SCRIPT,
-        pacScript: {
-          data: config.pacScript
+        mode: PROXY_MODES.FIXED_SERVERS,
+        rules: {
+          singleProxy: {
+            scheme: config.type,
+            host: config.host.trim(),
+            port: parseInt(config.port)
+          },
+          bypassList: generateBypassList(config.bypassList)
         }
       },
       scope: 'regular'
     };
+
+    return proxyConfig;
+  } catch (error) {
+    logger.error('Error formatting proxy rules:', error);
+    throw error;
   }
-
-  // For HTTP, HTTPS, SOCKS4, SOCKS5
-  const proxyConfig = {
-    value: {
-      mode: PROXY_MODES.FIXED_SERVERS,
-      rules: {
-        singleProxy: {
-          scheme: config.type,
-          host: config.host,
-          port: parseInt(config.port)
-        },
-        bypassList: generateBypassList(config.bypassList)
-      }
-    },
-    scope: 'regular'
-  };
-
-  return proxyConfig;
 }
 
 /**
