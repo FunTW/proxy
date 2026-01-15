@@ -144,6 +144,14 @@ export async function updateStatistics(proxyId) {
 }
 
 /**
+ * Clear all usage statistics
+ * @returns {Promise<void>}
+ */
+export async function clearStatistics() {
+  await chrome.storage.local.set({ [STORAGE_KEYS.STATISTICS]: { byProxy: {} } });
+}
+
+/**
  * Initialize storage with default values on first install
  * @returns {Promise<void>}
  */

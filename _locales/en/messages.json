@@ -258,6 +258,18 @@
     "message": "Are you sure you want to delete",
     "description": "Delete confirmation message"
   },
+  "btnClearStatistics": {
+    "message": "Clear Statistics",
+    "description": "Clear statistics button"
+  },
+  "msgClearStatisticsConfirm": {
+    "message": "Are you sure you want to clear all usage statistics? This action cannot be undone.",
+    "description": "Clear statistics confirmation message"
+  },
+  "msgStatisticsCleared": {
+    "message": "Statistics cleared successfully",
+    "description": "Statistics cleared success message"
+  },
 
   "errorFailedToLoad": {
     "message": "Failed to load data",
@@ -294,6 +306,10 @@
   "errorFailedToImport": {
     "message": "Failed to import configuration. Invalid file format.",
     "description": "Failed to import error"
+  },
+  "errorFailedToClear": {
+    "message": "Failed to clear statistics",
+    "description": "Failed to clear statistics error"
   },
   "errorInvalidFormat": {
     "message": "Invalid file format",

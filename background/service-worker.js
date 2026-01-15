@@ -16,6 +16,7 @@ import {
   setCurrentProxyId,
   getStatistics,
   updateStatistics,
+  clearStatistics,
   initializeStorage,
   exportAllData,
   importData
@@ -392,6 +393,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case MESSAGE_TYPES.GET_STATISTICS:
       getStatistics()
         .then(stats => sendResponse({ success: true, data: stats }))
+        .catch(error => sendResponse({ success: false, error: error.message }));
+      return true;
+
+    case MESSAGE_TYPES.CLEAR_STATISTICS:
+      clearStatistics()
+        .then(() => sendResponse({ success: true, data: { message: 'Statistics cleared' } }))
         .catch(error => sendResponse({ success: false, error: error.message }));
       return true;
 

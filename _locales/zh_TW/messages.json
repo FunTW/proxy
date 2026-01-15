@@ -258,6 +258,18 @@
     "message": "確定要刪除",
     "description": "Delete confirmation message"
   },
+  "btnClearStatistics": {
+    "message": "清除統計",
+    "description": "Clear statistics button"
+  },
+  "msgClearStatisticsConfirm": {
+    "message": "確定要清除所有使用統計嗎？此操作無法復原。",
+    "description": "Clear statistics confirmation message"
+  },
+  "msgStatisticsCleared": {
+    "message": "統計已成功清除",
+    "description": "Statistics cleared success message"
+  },
 
   "errorFailedToLoad": {
     "message": "載入資料失敗",
@@ -294,6 +306,10 @@
   "errorFailedToImport": {
     "message": "匯入設定失敗。檔案格式無效。",
     "description": "Failed to import error"
+  },
+  "errorFailedToClear": {
+    "message": "清除統計失敗",
+    "description": "Failed to clear statistics error"
   },
   "errorInvalidFormat": {
     "message": "檔案格式無效",

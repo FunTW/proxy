@@ -17,7 +17,7 @@ let configIdField, proxyNameField, proxyTypeField, proxyHostField, proxyPortFiel
 let bypassListField, pacScriptField, proxyColorField;
 let serverFields, pacScriptFieldContainer;
 let addProxyBtn, cancelFormBtn, cancelBtn, testBtn, deleteBtn, exportBtn, importBtn, importFile;
-let formTitle, statisticsContainer, toast, loadTemplateBtn, versionInfo;
+let formTitle, statisticsContainer, toast, loadTemplateBtn, versionInfo, clearStatisticsBtn;
 
 // State
 let proxyConfigs = [];
@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   toast = document.getElementById('toast');
   loadTemplateBtn = document.getElementById('loadTemplateBtn');
   versionInfo = document.getElementById('versionInfo');
+  clearStatisticsBtn = document.getElementById('clearStatisticsBtn');
 
   // Display version
   displayVersion();
@@ -81,6 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   importBtn.addEventListener('click', () => importFile.click());
   importFile.addEventListener('change', handleImport);
   loadTemplateBtn.addEventListener('click', loadPACTemplate);
+  clearStatisticsBtn.addEventListener('click', handleClearStatistics);
 
   // Listen for storage changes
   chrome.storage.onChanged.addListener(handleStorageChange);
@@ -590,6 +592,31 @@ function renderStatistics() {
   }).join('');
 
   statisticsContainer.innerHTML = statsHTML;
+}
+
+/**
+ * Handle clear statistics
+ */
+async function handleClearStatistics() {
+  if (!confirm(t('msgClearStatisticsConfirm'))) {
+    return;
+  }
+
+  try {
+    const response = await chrome.runtime.sendMessage({
+      type: MESSAGE_TYPES.CLEAR_STATISTICS
+    });
+
+    if (response.success) {
+      showToast(t('msgStatisticsCleared'), 'success');
+      await loadStatistics();
+    } else {
+      showToast(response.error || t('errorFailedToClear'), 'error');
+    }
+  } catch (error) {
+    console.error('Error clearing statistics:', error);
+    showToast(t('errorFailedToClear'), 'error');
+  }
 }
 
 /**
