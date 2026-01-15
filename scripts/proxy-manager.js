@@ -32,12 +32,27 @@ export function createProxyConfig(data) {
  */
 export function validateProxyConfig(config) {
   // Check required fields
-  if (!config.name || config.name.trim() === '') {
+  if (!config || typeof config !== 'object') {
+    return { valid: false, error: 'Invalid configuration object' };
+  }
+  
+  if (!config.name || typeof config.name !== 'string' || config.name.trim() === '') {
     return { valid: false, error: 'Proxy name is required' };
   }
+  
+  // Validate name length
+  if (config.name.trim().length > 100) {
+    return { valid: false, error: 'Proxy name must be 100 characters or less' };
+  }
 
-  if (!config.type) {
+  if (!config.type || typeof config.type !== 'string') {
     return { valid: false, error: 'Proxy type is required' };
+  }
+  
+  // Validate proxy type
+  const validTypes = Object.values(PROXY_TYPES);
+  if (!validTypes.includes(config.type)) {
+    return { valid: false, error: 'Invalid proxy type' };
   }
 
   // Validate based on proxy type
@@ -45,9 +60,24 @@ export function validateProxyConfig(config) {
     if (!config.pacScript || config.pacScript.trim() === '') {
       return { valid: false, error: 'PAC script is required for PAC type' };
     }
-    // Basic PAC script validation
-    if (!config.pacScript.includes('FindProxyForURL')) {
+    
+    // Enhanced PAC script validation
+    const script = config.pacScript.trim();
+    if (!script.includes('FindProxyForURL')) {
       return { valid: false, error: 'PAC script must contain FindProxyForURL function' };
+    }
+    
+    // Check for function signature
+    const functionPattern = /function\s+FindProxyForURL\s*\(/;
+    if (!functionPattern.test(script)) {
+      return { valid: false, error: 'PAC script must have function FindProxyForURL(url, host)' };
+    }
+    
+    // Check for balanced braces
+    const openBraces = (script.match(/\{/g) || []).length;
+    const closeBraces = (script.match(/\}/g) || []).length;
+    if (openBraces !== closeBraces) {
+      return { valid: false, error: 'PAC script has unmatched braces' };
     }
   } else if (config.type === PROXY_TYPES.AUTO_DETECT || config.type === PROXY_TYPES.DIRECT) {
     // No host/port validation needed for auto-detect or direct
@@ -58,18 +88,44 @@ export function validateProxyConfig(config) {
       return { valid: false, error: 'Proxy host is required' };
     }
 
-    // Validate host format (basic check)
-    const hostPattern = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
+    // Validate host format (enhanced check)
+    const host = config.host.trim();
+    
+    // Check for valid domain name or IP
+    const domainPattern = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+    const hostnamePattern = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
     const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
-
-    if (!hostPattern.test(config.host) && !ipPattern.test(config.host)) {
-      return { valid: false, error: 'Invalid host format' };
+    
+    // Validate IP address format more strictly
+    const isValidIP = ipPattern.test(host);
+    if (isValidIP) {
+      const parts = host.split('.');
+      const allValid = parts.every(part => {
+        const num = parseInt(part, 10);
+        return num >= 0 && num <= 255;
+      });
+      if (!allValid) {
+        return { valid: false, error: 'Invalid IP address format' };
+      }
+    }
+    
+    // Check for valid domain or hostname
+    const isValidDomain = domainPattern.test(host);
+    const isValidHostname = hostnamePattern.test(host);
+    
+    if (!isValidIP && !isValidDomain && !isValidHostname) {
+      return { valid: false, error: 'Invalid host format. Use a valid domain name or IP address' };
     }
 
     // Validate port
-    const port = parseInt(config.port);
+    const port = parseInt(config.port, 10);
     if (isNaN(port) || port < 1 || port > 65535) {
       return { valid: false, error: 'Port must be between 1 and 65535' };
+    }
+    
+    // Ensure host is trimmed
+    if (config.host && typeof config.host === 'string') {
+      config.host = config.host.trim();
     }
   }
 

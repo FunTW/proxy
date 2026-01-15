@@ -5,6 +5,7 @@ import {
   CONNECTION_TEST_TIMEOUT,
   TEST_URL
 } from '../scripts/constants.js';
+import { logger } from '../scripts/logger.js';
 
 import {
   getProxyConfigs,
@@ -35,14 +36,14 @@ import {
 
 // Initialize on install
 chrome.runtime.onInstalled.addListener(async () => {
-  console.log('Proxy Manager installed');
+  logger.log('Proxy Manager installed');
   await initializeStorage();
   await updateBadge(null);
 });
 
 // Load current proxy on startup
 chrome.runtime.onStartup.addListener(async () => {
-  console.log('Proxy Manager starting up');
+  logger.log('Proxy Manager starting up');
   const currentProxyId = await getCurrentProxyId();
   if (currentProxyId) {
     const config = await getProxyConfigById(currentProxyId);
@@ -60,33 +61,33 @@ chrome.runtime.onStartup.addListener(async () => {
  * @returns {Promise<Object>} Result object
  */
 async function applyProxyConfig(configId) {
-  console.log('[Service Worker] applyProxyConfig called with ID:', configId);
+  logger.log('[Service Worker] applyProxyConfig called with ID:', configId);
   
   try {
     const config = await getProxyConfigById(configId);
-    console.log('[Service Worker] Config retrieved:', config);
+    logger.log('[Service Worker] Config retrieved:', config);
 
     if (!config) {
-      console.error('[Service Worker] Configuration not found for ID:', configId);
+      logger.error('[Service Worker] Configuration not found for ID:', configId);
       return { success: false, error: 'Configuration not found' };
     }
 
     // Validate configuration
     const validation = validateProxyConfig(config);
-    console.log('[Service Worker] Validation result:', validation);
+    logger.log('[Service Worker] Validation result:', validation);
     
     if (!validation.valid) {
-      console.error('[Service Worker] Invalid configuration:', validation.error);
+      logger.error('[Service Worker] Invalid configuration:', validation.error);
       return { success: false, error: validation.error };
     }
 
     // Format for chrome.proxy API
     const proxySettings = formatProxyRules(config);
-    console.log('[Service Worker] Proxy settings formatted:', proxySettings);
+    logger.log('[Service Worker] Proxy settings formatted:', proxySettings);
 
     // Apply proxy settings
     await chrome.proxy.settings.set(proxySettings);
-    console.log('[Service Worker] Proxy settings applied to Chrome');
+    logger.log('[Service Worker] Proxy settings applied to Chrome');
 
     // Update storage
     await setCurrentProxyId(configId);
@@ -95,7 +96,7 @@ async function applyProxyConfig(configId) {
     // Update badge
     await updateBadge(config);
 
-    console.log('[Service Worker] Proxy applied successfully:', config.name);
+    logger.log('[Service Worker] Proxy applied successfully:', config.name);
 
     return {
       success: true,
@@ -106,7 +107,7 @@ async function applyProxyConfig(configId) {
       }
     };
   } catch (error) {
-    console.error('[Service Worker] Error applying proxy:', error);
+    logger.error('[Service Worker] Error applying proxy:', error);
     await updateBadge(null, true);
     return { success: false, error: error.message };
   }
@@ -122,11 +123,11 @@ async function clearProxy() {
     await setCurrentProxyId(null);
     await updateBadge(null);
 
-    console.log('Proxy cleared - direct connection');
+    logger.log('Proxy cleared - direct connection');
 
     return { success: true, data: { message: 'Direct connection enabled' } };
   } catch (error) {
-    console.error('Error clearing proxy:', error);
+    logger.error('Error clearing proxy:', error);
     return { success: false, error: error.message };
   }
 }
@@ -178,7 +179,7 @@ async function getCurrentProxy() {
       }
     };
   } catch (error) {
-    console.error('Error getting current proxy:', error);
+    logger.error('Error getting current proxy:', error);
     return { success: false, error: error.message };
   }
 }
@@ -250,7 +251,7 @@ async function testProxyConnection(configId) {
       };
     }
   } catch (error) {
-    console.error('Error testing connection:', error);
+    logger.error('Error testing connection:', error);
     return { success: false, error: error.message };
   }
 }
@@ -274,7 +275,7 @@ async function updateBadge(config, error = false) {
       await chrome.action.setBadgeBackgroundColor({ color: BADGE_COLORS.INACTIVE });
     }
   } catch (error) {
-    console.error('Error updating badge:', error);
+    logger.error('Error updating badge:', error);
   }
 }
 
@@ -282,7 +283,7 @@ async function updateBadge(config, error = false) {
  * Message handler
  */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log('Received message:', message.type);
+  logger.log('Received message:', message.type);
 
   // Handle different message types
   switch (message.type) {
@@ -408,4 +409,4 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-console.log('Proxy Manager service worker loaded');
+logger.log('Proxy Manager service worker loaded');

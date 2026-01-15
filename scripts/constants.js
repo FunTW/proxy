@@ -73,3 +73,6 @@ export const TEST_URL = 'https://www.google.com';
 
 // Default color for new proxy configs
 export const DEFAULT_PROXY_COLOR = '#2196F3';
+
+// Debug mode (set to false in production)
+export const DEBUG_MODE = false;

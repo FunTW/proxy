@@ -6,6 +6,7 @@ import {
 } from '../scripts/proxy-manager.js';
 import { exportAllData, importData } from '../scripts/storage.js';
 import { initializeI18n, getMessage as t } from '../scripts/i18n.js';
+import { logger } from '../scripts/logger.js';
 
 /**
  * Options page controller
@@ -114,7 +115,7 @@ async function loadData() {
       loadStatistics()
     ]);
   } catch (error) {
-    console.error('Error loading data:', error);
+    logger.error('Error loading data:', error);
     showToast(t('errorFailedToLoad'), 'error');
   }
 }
@@ -135,7 +136,7 @@ async function loadProxyConfigs() {
       showToast(t('errorFailedToLoad'), 'error');
     }
   } catch (error) {
-    console.error('Error loading proxy configs:', error);
+    logger.error('Error loading proxy configs:', error);
   }
 }
 
@@ -152,7 +153,7 @@ async function loadCurrentStatus() {
       currentStatus = response.data;
     }
   } catch (error) {
-    console.error('Error loading status:', error);
+    logger.error('Error loading status:', error);
   }
 }
 
@@ -170,7 +171,7 @@ async function loadStatistics() {
       renderStatistics();
     }
   } catch (error) {
-    console.error('Error loading statistics:', error);
+    logger.error('Error loading statistics:', error);
   }
 }
 
@@ -178,12 +179,14 @@ async function loadStatistics() {
  * Render proxy list in sidebar
  */
 function renderProxyList() {
-  proxyListSidebar.innerHTML = '';
+  // Use DocumentFragment for better performance
+  const fragment = document.createDocumentFragment();
 
   if (proxyConfigs.length === 0) {
     emptyState.classList.add('visible');
     statisticsSection.style.display = 'block';
     formSection.style.display = 'none';
+    proxyListSidebar.innerHTML = '';
     return;
   }
 
@@ -191,8 +194,12 @@ function renderProxyList() {
 
   proxyConfigs.forEach(config => {
     const item = createProxyListItem(config);
-    proxyListSidebar.appendChild(item);
+    fragment.appendChild(item);
   });
+
+  // Clear and append all at once for better performance
+  proxyListSidebar.innerHTML = '';
+  proxyListSidebar.appendChild(fragment);
 
   // Show statistics by default if no config is selected
   if (!selectedConfigId && proxyConfigs.length > 0) {
@@ -411,7 +418,7 @@ async function handleFormSubmit(e) {
       }
     }
   } catch (error) {
-    console.error('Error saving config:', error);
+    logger.error('Error saving config:', error);
     showToast(t('errorFailedToSave'), 'error');
   }
 }
@@ -434,7 +441,7 @@ async function handleTest(config) {
       showToast(response.error || t('errorFailedToTest'), 'error');
     }
   } catch (error) {
-    console.error('Error testing connection:', error);
+    logger.error('Error testing connection:', error);
     showToast(t('errorFailedToTest'), 'error');
   }
 }
@@ -489,7 +496,7 @@ async function handleDelete(config) {
         showToast(response.error || t('errorFailedToDelete'), 'error');
       }
     } catch (error) {
-      console.error('Error deleting config:', error);
+      logger.error('Error deleting config:', error);
       showToast(t('errorFailedToDelete'), 'error');
     }
   });
@@ -510,7 +517,7 @@ async function handleExport() {
     URL.revokeObjectURL(url);
     showToast(t('msgExportSuccess'), 'success');
   } catch (error) {
-    console.error('Error exporting:', error);
+    logger.error('Error exporting:', error);
     showToast(t('errorFailedToExport'), 'error');
   }
 }
@@ -522,17 +529,17 @@ async function handleImport(e) {
   const file = e.target.files[0];
   if (!file) return;
 
-  console.log('[Import UI] File selected:', file.name, 'type:', file.type, 'size:', file.size);
+  logger.log('[Import UI] File selected:', file.name, 'type:', file.type, 'size:', file.size);
 
   try {
     const text = await file.text();
-    console.log('[Import UI] File read, length:', text.length);
+    logger.log('[Import UI] File read, length:', text.length);
 
     const data = JSON.parse(text);
-    console.log('[Import UI] JSON parsed successfully');
+    logger.log('[Import UI] JSON parsed successfully');
 
     const result = await importData(data, true);
-    console.log('[Import UI] Import result:', result);
+    logger.log('[Import UI] Import result:', result);
 
     if (result.success) {
       // Show detailed import message
@@ -547,11 +554,11 @@ async function handleImport(e) {
       showToast(message, 'success');
       await loadData();
     } else {
-      console.error('[Import UI] Import failed:', result.message);
+      logger.error('[Import UI] Import failed:', result.message);
       showToast(result.message || t('errorFailedToImport'), 'error');
     }
   } catch (error) {
-    console.error('[Import UI] Error importing:', error);
+    logger.error('[Import UI] Error importing:', error);
     let errorMsg = t('errorFailedToImport');
     if (error instanceof SyntaxError) {
       errorMsg = 'Invalid JSON format';
@@ -585,23 +592,37 @@ function renderStatistics() {
   // Calculate max connections for bar sizing
   const maxConnections = Math.max(...Object.values(statistics.byProxy).map(s => s.connections));
 
-  const statsHTML = Object.entries(statistics.byProxy).map(([proxyId, stat]) => {
+  // Use DocumentFragment for better performance
+  const fragment = document.createDocumentFragment();
+  
+  Object.entries(statistics.byProxy).forEach(([proxyId, stat]) => {
     const config = proxyConfigs.find(c => c.id === proxyId);
     const proxyName = config ? config.name : 'Unknown Proxy';
-    const percentage = (stat.connections / maxConnections) * 100;
+    const percentage = maxConnections > 0 ? (stat.connections / maxConnections) * 100 : 0;
 
-    return `
-      <div class="stat-item">
-        <div class="stat-name">${proxyName}</div>
-        <div class="stat-bar">
-          <div class="stat-bar-fill" style="width: ${percentage}%"></div>
-        </div>
-        <div class="stat-value">${stat.connections} ${t('statisticsConnections')}</div>
+    const statItem = document.createElement('div');
+    statItem.className = 'stat-item';
+    statItem.innerHTML = `
+      <div class="stat-name">${escapeHtml(proxyName)}</div>
+      <div class="stat-bar">
+        <div class="stat-bar-fill" style="width: ${percentage}%"></div>
       </div>
+      <div class="stat-value">${stat.connections} ${t('statisticsConnections')}</div>
     `;
-  }).join('');
+    fragment.appendChild(statItem);
+  });
 
-  statisticsContainer.innerHTML = statsHTML;
+  statisticsContainer.innerHTML = '';
+  statisticsContainer.appendChild(fragment);
+}
+
+/**
+ * Escape HTML to prevent XSS
+ */
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 /**
@@ -646,7 +667,7 @@ async function handleClearStatistics() {
         showToast(response.error || t('errorFailedToClear'), 'error');
       }
     } catch (error) {
-      console.error('Error clearing statistics:', error);
+      logger.error('Error clearing statistics:', error);
       showToast(t('errorFailedToClear'), 'error');
     }
   });
@@ -683,4 +704,4 @@ function displayVersion() {
   versionInfo.textContent = `${t('version')} ${manifest.version}`;
 }
 
-console.log('Options page loaded');
+logger.log('Options page loaded');

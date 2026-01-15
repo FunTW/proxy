@@ -4,6 +4,7 @@
 
 import { PROXY_TYPES } from './constants.js';
 import { createProxyConfig } from './proxy-manager.js';
+import { logger } from './logger.js';
 
 /**
  * Detect if data is in Omega format
@@ -60,7 +61,7 @@ export function isOmegaFormat(data) {
  * @returns {Array} Array of proxy configurations
  */
 export function parseOmegaBackup(omegaData) {
-  console.log('[Omega Parser] Starting parse, data keys:', Object.keys(omegaData));
+  logger.log('[Omega Parser] Starting parse, data keys:', Object.keys(omegaData));
 
   const configs = [];
 
@@ -72,30 +73,30 @@ export function parseOmegaBackup(omegaData) {
     if (key.startsWith('+') && typeof omegaData[key] === 'object') {
       const profileName = key.substring(1); // Remove '+' prefix
       profiles[profileName] = omegaData[key];
-      console.log(`[Omega Parser] Found profile: ${profileName}`, omegaData[key]);
+      logger.log(`[Omega Parser] Found profile: ${profileName}`, omegaData[key]);
     }
   }
 
-  console.log(`[Omega Parser] Total profiles found: ${Object.keys(profiles).length}`);
+  logger.log(`[Omega Parser] Total profiles found: ${Object.keys(profiles).length}`);
 
   // Convert each profile to our format
   for (const [name, profile] of Object.entries(profiles)) {
     // Skip special profiles
     if (name === 'ZeroOmega Conditions' || name === 'Proxy SwitchyOmega Conditions') {
-      console.log(`[Omega Parser] Skipping special profile: ${name}`);
+      logger.log(`[Omega Parser] Skipping special profile: ${name}`);
       continue;
     }
 
     const config = convertOmegaProfile(name, profile);
     if (config) {
       configs.push(config);
-      console.log(`[Omega Parser] Converted profile: ${name}`, config);
+      logger.log(`[Omega Parser] Converted profile: ${name}`, config);
     } else {
-      console.log(`[Omega Parser] Failed to convert profile: ${name}`);
+      logger.log(`[Omega Parser] Failed to convert profile: ${name}`);
     }
   }
 
-  console.log(`[Omega Parser] Total configs converted: ${configs.length}`);
+  logger.log(`[Omega Parser] Total configs converted: ${configs.length}`);
   return configs;
 }
 
@@ -107,12 +108,12 @@ export function parseOmegaBackup(omegaData) {
  */
 function convertOmegaProfile(name, profile) {
   if (!profile || typeof profile !== 'object') {
-    console.warn(`[Omega Parser] Invalid profile object for: ${name}`);
+    logger.warn(`[Omega Parser] Invalid profile object for: ${name}`);
     return null;
   }
 
   const profileType = profile.profileType;
-  console.log(`[Omega Parser] Converting profile: ${name}, type: ${profileType}`);
+  logger.log(`[Omega Parser] Converting profile: ${name}, type: ${profileType}`);
 
   switch (profileType) {
     case 'FixedProfile':
@@ -130,16 +131,16 @@ function convertOmegaProfile(name, profile) {
     case 'SwitchProfile':
       // SwitchProfile contains rules, we skip it for now
       // Could potentially be converted to multiple profiles
-      console.log(`[Omega Parser] Skipping SwitchProfile: ${name}`);
+      logger.log(`[Omega Parser] Skipping SwitchProfile: ${name}`);
       return null;
 
     case 'VirtualProfile':
       // Virtual profiles reference other profiles, skip
-      console.log(`[Omega Parser] Skipping VirtualProfile: ${name}`);
+      logger.log(`[Omega Parser] Skipping VirtualProfile: ${name}`);
       return null;
 
     default:
-      console.warn(`[Omega Parser] Unknown Omega profile type: ${profileType} for profile: ${name}`);
+      logger.warn(`[Omega Parser] Unknown Omega profile type: ${profileType} for profile: ${name}`);
       return null;
   }
 }
@@ -148,7 +149,7 @@ function convertOmegaProfile(name, profile) {
  * Convert FixedProfile (HTTP/HTTPS/SOCKS)
  */
 function convertFixedProfile(name, profile) {
-  console.log(`[Omega Parser] Converting FixedProfile: ${name}`, profile);
+  logger.log(`[Omega Parser] Converting FixedProfile: ${name}`, profile);
 
   // Extract proxy settings from fallbackProxy object
   const fallbackProxy = profile.fallbackProxy || {};
@@ -156,7 +157,7 @@ function convertFixedProfile(name, profile) {
   const { bypassList } = profile;
 
   if (!host || !port) {
-    console.warn(`[Omega Parser] Invalid FixedProfile ${name}: missing host or port`, profile);
+    logger.warn(`[Omega Parser] Invalid FixedProfile ${name}: missing host or port`, profile);
     return null;
   }
 
@@ -176,7 +177,7 @@ function convertFixedProfile(name, profile) {
       proxyType = PROXY_TYPES.SOCKS5;
       break;
     default:
-      console.warn(`[Omega Parser] Unknown scheme: ${scheme}, defaulting to HTTP`);
+      logger.warn(`[Omega Parser] Unknown scheme: ${scheme}, defaulting to HTTP`);
       proxyType = PROXY_TYPES.HTTP;
   }
 
@@ -192,7 +193,7 @@ function convertFixedProfile(name, profile) {
     color: generateColorFromName(name)
   });
 
-  console.log(`[Omega Parser] FixedProfile converted:`, config);
+  logger.log(`[Omega Parser] FixedProfile converted:`, config);
   return config;
 }
 
@@ -203,7 +204,7 @@ function convertPacProfile(name, profile) {
   const { pacScript } = profile;
 
   if (!pacScript) {
-    console.warn(`Invalid PacProfile ${name}: missing pacScript`);
+    logger.warn(`Invalid PacProfile ${name}: missing pacScript`);
     return null;
   }
 

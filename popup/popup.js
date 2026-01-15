@@ -1,6 +1,7 @@
 import { MESSAGE_TYPES } from '../scripts/constants.js';
 import { getProxyTypeDisplayName, formatProxyAddress } from '../scripts/proxy-manager.js';
 import { initializeI18n, getMessage as t } from '../scripts/i18n.js';
+import { logger } from '../scripts/logger.js';
 
 /**
  * Popup UI controller
@@ -18,7 +19,7 @@ let proxyConfigs = [];
  * Initialize popup
  */
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('[Popup] DOMContentLoaded - Initializing popup');
+  logger.log('[Popup] DOMContentLoaded - Initializing popup');
   
   // Initialize i18n
   initializeI18n();
@@ -35,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   emptyState = document.getElementById('emptyState');
   versionInfo = document.getElementById('versionInfo');
 
-  console.log('[Popup] DOM elements retrieved');
+  logger.log('[Popup] DOM elements retrieved');
 
   // Display version
   displayVersion();
@@ -45,15 +46,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   refreshBtn.addEventListener('click', handleRefresh);
   settingsBtn.addEventListener('click', openSettings);
 
-  console.log('[Popup] Event listeners set up');
+  logger.log('[Popup] Event listeners set up');
 
   // Listen for storage changes
   chrome.storage.onChanged.addListener(handleStorageChange);
 
   // Load initial data
-  console.log('[Popup] Loading initial data');
+  logger.log('[Popup] Loading initial data');
   await loadData();
-  console.log('[Popup] Initialization complete');
+  logger.log('[Popup] Initialization complete');
 });
 
 /**
@@ -66,7 +67,7 @@ async function loadData() {
       loadProxyList()
     ]);
   } catch (error) {
-    console.error('Error loading data:', error);
+    logger.error('Error loading data:', error);
     showError(t('errorFailedToLoad'));
   }
 }
@@ -87,7 +88,7 @@ async function loadProxyStatus() {
       showError(t('errorFailedToLoad'));
     }
   } catch (error) {
-    console.error('Error loading proxy status:', error);
+    logger.error('Error loading proxy status:', error);
     showError(t('errorFailedToConnect'));
   }
 }
@@ -108,7 +109,7 @@ async function loadProxyList() {
       showError(t('errorFailedToLoad'));
     }
   } catch (error) {
-    console.error('Error loading proxy list:', error);
+    logger.error('Error loading proxy list:', error);
   }
 }
 
@@ -137,27 +138,32 @@ function updateStatusUI(status) {
  * Render proxy list
  */
 function renderProxyList() {
-  console.log('[Popup] Rendering proxy list, count:', proxyConfigs.length);
+  logger.log('[Popup] Rendering proxy list, count:', proxyConfigs.length);
   
-  // Clear existing list
-  proxyList.innerHTML = '';
+  // Use DocumentFragment for better performance
+  const fragment = document.createDocumentFragment();
 
   if (proxyConfigs.length === 0) {
-    console.log('[Popup] No proxy configs, showing empty state');
+    logger.log('[Popup] No proxy configs, showing empty state');
     emptyState.classList.add('visible');
+    proxyList.innerHTML = '';
     return;
   }
 
   emptyState.classList.remove('visible');
 
-  // Create proxy items
+  // Create proxy items using fragment
   proxyConfigs.forEach(config => {
-    console.log('[Popup] Creating item for:', config.name, config.id);
+    logger.log('[Popup] Creating item for:', config.name, config.id);
     const item = createProxyItem(config);
-    proxyList.appendChild(item);
+    fragment.appendChild(item);
   });
   
-  console.log('[Popup] Proxy list rendered successfully');
+  // Clear and append all at once for better performance
+  proxyList.innerHTML = '';
+  proxyList.appendChild(fragment);
+  
+  logger.log('[Popup] Proxy list rendered successfully');
 }
 
 /**
@@ -207,9 +213,9 @@ function createProxyItem(config) {
   }
 
   // Click handler
-  console.log('[Popup] Adding click handler for:', config.name, config.id, 'isActive:', isActive);
+  logger.log('[Popup] Adding click handler for:', config.name, config.id, 'isActive:', isActive);
   item.addEventListener('click', (e) => {
-    console.log('[Popup] Click event fired on item:', config.name);
+    logger.log('[Popup] Click event fired on item:', config.name);
     e.preventDefault();
     e.stopPropagation();
     handleProxyClick(config);
@@ -222,38 +228,38 @@ function createProxyItem(config) {
  * Handle proxy item click
  */
 async function handleProxyClick(config) {
-  console.log('[Popup] Proxy item clicked:', config.name, config.id);
+  logger.log('[Popup] Proxy item clicked:', config.name, config.id);
   
   // If already active, do nothing
   if (currentStatus?.isActive && currentStatus?.proxy?.id === config.id) {
-    console.log('[Popup] Proxy already active, ignoring click');
+    logger.log('[Popup] Proxy already active, ignoring click');
     return;
   }
 
   try {
     // Show loading state
     statusText.textContent = t('statusConnecting');
-    console.log('[Popup] Sending APPLY_PROXY message');
+    logger.log('[Popup] Sending APPLY_PROXY message');
 
     const response = await chrome.runtime.sendMessage({
       type: MESSAGE_TYPES.APPLY_PROXY,
       data: { configId: config.id }
     });
 
-    console.log('[Popup] APPLY_PROXY response:', response);
+    logger.log('[Popup] APPLY_PROXY response:', response);
 
     if (response.success) {
-      console.log('[Popup] Proxy applied successfully');
+      logger.log('[Popup] Proxy applied successfully');
       // Reload status
       await loadProxyStatus();
       renderProxyList();
     } else {
-      console.error('[Popup] Failed to apply proxy:', response.error);
+      logger.error('[Popup] Failed to apply proxy:', response.error);
       showError(response.error || t('errorFailedToApply'));
       await loadProxyStatus();
     }
   } catch (error) {
-    console.error('[Popup] Error applying proxy:', error);
+    logger.error('[Popup] Error applying proxy:', error);
     showError(t('errorFailedToApply'));
     await loadProxyStatus();
   }
@@ -280,7 +286,7 @@ async function handleDisconnect() {
       disconnectBtn.disabled = false;
     }
   } catch (error) {
-    console.error('Error disconnecting:', error);
+    logger.error('Error disconnecting:', error);
     showError(t('errorFailedToDisconnect'));
     disconnectBtn.disabled = false;
   }
@@ -320,7 +326,7 @@ function handleStorageChange(changes, area) {
  * Show error message
  */
 function showError(message) {
-  console.error(message);
+  logger.error(message);
   statusDot.className = 'status-dot error';
   // Could add a toast notification here in the future
 }
@@ -333,4 +339,4 @@ function displayVersion() {
   versionInfo.textContent = `${t('version')} ${manifest.version}`;
 }
 
-console.log('Popup loaded');
+logger.log('Popup loaded');

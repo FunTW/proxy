@@ -1,4 +1,5 @@
 import { STORAGE_KEYS, DEFAULT_SETTINGS } from './constants.js';
+import { logger } from './logger.js';
 
 /**
  * Storage abstraction layer for chrome.storage API
@@ -249,29 +250,29 @@ export async function importData(data, merge = true) {
  * @returns {Promise<Object>} { isOmega: boolean, configs: Array }
  */
 async function detectAndConvertFormat(data) {
-  console.log('[Import] Detecting format, data keys:', Object.keys(data));
+  logger.log('[Import] Detecting format, data keys:', Object.keys(data));
 
   // Dynamic import to avoid circular dependencies
   const { isOmegaFormat, parseOmegaBackup } = await import('./omega-parser.js');
 
   // Check if it's Omega format
   const isOmega = isOmegaFormat(data);
-  console.log('[Import] Is Omega format:', isOmega);
+  logger.log('[Import] Is Omega format:', isOmega);
 
   if (isOmega) {
-    console.log('[Import] Parsing as Omega format');
+    logger.log('[Import] Parsing as Omega format');
     const configs = parseOmegaBackup(data);
-    console.log('[Import] Parsed configs count:', configs.length);
+    logger.log('[Import] Parsed configs count:', configs.length);
     return { isOmega: true, configs };
   }
 
   // Native format
   if (data.configs && Array.isArray(data.configs)) {
-    console.log('[Import] Detected native format');
+    logger.log('[Import] Detected native format');
     return { isOmega: false, configs: data.configs };
   }
 
   // Unknown format
-  console.error('[Import] Unknown format, data structure:', data);
+  logger.error('[Import] Unknown format, data structure:', data);
   throw new Error('Invalid data format: Unable to detect format type');
 }
