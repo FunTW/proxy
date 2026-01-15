@@ -25,103 +25,112 @@
 
     <!-- Main Content -->
     <main class="main">
-      <!-- Proxy List Section -->
-      <section class="section">
-        <div class="section-header">
+      <!-- Left Panel: Proxy List -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
           <h2 data-i18n="sectionProxyConfigs">Proxy Configurations</h2>
-          <button class="btn btn-primary" id="addProxyBtn" data-i18n="btnAddProxy">Add Proxy</button>
+          <button class="btn btn-primary btn-add" id="addProxyBtn" data-i18n="btnAddProxy">+ Add</button>
         </div>
 
-        <div class="proxy-cards" id="proxyCards">
-          <!-- Proxy cards will be inserted here -->
+        <div class="proxy-list-sidebar" id="proxyListSidebar">
+          <!-- Proxy list items will be inserted here -->
         </div>
 
         <div class="empty-state" id="emptyState">
-          <p data-i18n="emptyStateNoProxyYet">No proxy configurations yet.</p>
-          <p data-i18n="emptyStateClickAdd">Click "Add Proxy" to create your first one.</p>
+          <p data-i18n="emptyStateNoProxyYet">No proxy yet.</p>
+          <p data-i18n="emptyStateClickAdd">Click "Add" to create.</p>
         </div>
-      </section>
+      </aside>
 
-      <!-- Add/Edit Form Section -->
-      <section class="section form-section" id="formSection" style="display: none;">
-        <div class="section-header">
-          <h2 id="formTitle">Add Proxy Configuration</h2>
-          <button class="btn btn-text" id="cancelFormBtn" data-i18n="btnCancel">Cancel</button>
-        </div>
-
-        <form id="proxyForm" class="proxy-form">
-          <input type="hidden" id="configId">
-
-          <div class="form-group">
-            <label for="proxyName"><span data-i18n="labelProxyName">Proxy Name</span> <span data-i18n="required">*</span></label>
-            <input type="text" id="proxyName" data-i18n-placeholder="placeholderProxyName" required>
+      <!-- Right Panel: Form or Statistics -->
+      <section class="content-panel">
+        <!-- Add/Edit Form -->
+        <div class="form-container" id="formSection" style="display: none;">
+          <div class="form-header">
+            <h2 id="formTitle">Add Proxy Configuration</h2>
+            <button class="btn btn-text" id="cancelFormBtn" data-i18n="btnCancel">Cancel</button>
           </div>
 
-          <div class="form-group">
-            <label for="proxyType"><span data-i18n="labelProxyType">Proxy Type</span> <span data-i18n="required">*</span></label>
-            <select id="proxyType" required>
-              <option value="http" data-i18n="proxyTypeHttp">HTTP</option>
-              <option value="https" data-i18n="proxyTypeHttps">HTTPS</option>
-              <option value="socks4" data-i18n="proxyTypeSocks4">SOCKS4</option>
-              <option value="socks5" data-i18n="proxyTypeSocks5">SOCKS5</option>
-              <option value="pac" data-i18n="proxyTypePac">PAC Script</option>
-              <option value="auto_detect" data-i18n="proxyTypeAutoDetect">Auto Detect</option>
-            </select>
-          </div>
+          <form id="proxyForm" class="proxy-form">
+            <input type="hidden" id="configId">
 
-          <!-- Server fields (hidden for PAC and auto_detect) -->
-          <div id="serverFields">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="proxyHost"><span data-i18n="labelHost">Host</span> <span data-i18n="required">*</span></label>
-                <input type="text" id="proxyHost" data-i18n-placeholder="placeholderHost">
+            <div class="form-group">
+              <label for="proxyName"><span data-i18n="labelProxyName">Proxy Name</span> <span data-i18n="required">*</span></label>
+              <input type="text" id="proxyName" data-i18n-placeholder="placeholderProxyName" required>
+            </div>
+
+            <div class="form-group">
+              <label for="proxyType"><span data-i18n="labelProxyType">Proxy Type</span> <span data-i18n="required">*</span></label>
+              <select id="proxyType" required>
+                <option value="http" data-i18n="proxyTypeHttp">HTTP</option>
+                <option value="https" data-i18n="proxyTypeHttps">HTTPS</option>
+                <option value="socks4" data-i18n="proxyTypeSocks4">SOCKS4</option>
+                <option value="socks5" data-i18n="proxyTypeSocks5">SOCKS5</option>
+                <option value="pac" data-i18n="proxyTypePac">PAC Script</option>
+                <option value="auto_detect" data-i18n="proxyTypeAutoDetect">Auto Detect</option>
+              </select>
+            </div>
+
+            <!-- Server fields (hidden for PAC and auto_detect) -->
+            <div id="serverFields">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="proxyHost"><span data-i18n="labelHost">Host</span> <span data-i18n="required">*</span></label>
+                  <input type="text" id="proxyHost" data-i18n-placeholder="placeholderHost">
+                </div>
+
+                <div class="form-group">
+                  <label for="proxyPort"><span data-i18n="labelPort">Port</span> <span data-i18n="required">*</span></label>
+                  <input type="number" id="proxyPort" data-i18n-placeholder="placeholderPort" min="1" max="65535">
+                </div>
               </div>
 
               <div class="form-group">
-                <label for="proxyPort"><span data-i18n="labelPort">Port</span> <span data-i18n="required">*</span></label>
-                <input type="number" id="proxyPort" data-i18n-placeholder="placeholderPort" min="1" max="65535">
+                <label for="bypassList" data-i18n="labelBypassList">Bypass List (comma-separated)</label>
+                <textarea id="bypassList" rows="3" data-i18n-placeholder="placeholderBypassList"></textarea>
+                <small data-i18n="labelBypassListHelp">Domains that should bypass the proxy</small>
+              </div>
+            </div>
+
+            <!-- PAC Script field (shown only for PAC type) -->
+            <div id="pacScriptField" style="display: none;">
+              <div class="form-group">
+                <label for="pacScript"><span data-i18n="labelPacScript">PAC Script</span> <span data-i18n="required">*</span></label>
+                <textarea id="pacScript" rows="10" data-i18n-placeholder="placeholderPacScript"></textarea>
+                <small><span data-i18n="labelPacScriptHelp">Enter your PAC script or</span> <button type="button" class="btn-link" id="loadTemplateBtn" data-i18n="linkLoadTemplate">load template</button></small>
               </div>
             </div>
 
             <div class="form-group">
-              <label for="bypassList" data-i18n="labelBypassList">Bypass List (comma-separated)</label>
-              <textarea id="bypassList" rows="3" data-i18n-placeholder="placeholderBypassList"></textarea>
-              <small data-i18n="labelBypassListHelp">Domains that should bypass the proxy</small>
+              <label for="proxyColor" data-i18n="labelColor">Color Tag</label>
+              <div class="color-picker">
+                <input type="color" id="proxyColor" value="#2196F3">
+              </div>
             </div>
-          </div>
 
-          <!-- PAC Script field (shown only for PAC type) -->
-          <div id="pacScriptField" style="display: none;">
-            <div class="form-group">
-              <label for="pacScript"><span data-i18n="labelPacScript">PAC Script</span> <span data-i18n="required">*</span></label>
-              <textarea id="pacScript" rows="10" data-i18n-placeholder="placeholderPacScript"></textarea>
-              <small><span data-i18n="labelPacScriptHelp">Enter your PAC script or</span> <button type="button" class="btn-link" id="loadTemplateBtn" data-i18n="linkLoadTemplate">load template</button></small>
+            <div class="form-actions">
+              <div class="form-actions-left">
+                <button type="button" class="btn btn-danger" id="deleteBtn" style="display: none;" data-i18n="btnDelete">Delete</button>
+              </div>
+              <div class="form-actions-right">
+                <button type="button" class="btn btn-secondary" id="testBtn" style="display: none;" data-i18n="btnTest">Test</button>
+                <button type="button" class="btn btn-secondary" id="cancelBtn" data-i18n="btnCancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" data-i18n="btnSave">Save</button>
+              </div>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label for="proxyColor" data-i18n="labelColor">Color Tag</label>
-            <div class="color-picker">
-              <input type="color" id="proxyColor" value="#2196F3">
-            </div>
-          </div>
-
-          <div class="form-actions">
-            <button type="button" class="btn btn-secondary" id="cancelBtn" data-i18n="btnCancel">Cancel</button>
-            <button type="submit" class="btn btn-primary" data-i18n="btnSave">Save Configuration</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- Statistics Section -->
-      <section class="section">
-        <div class="section-header">
-          <h2 data-i18n="sectionStatistics">Usage Statistics</h2>
+          </form>
         </div>
 
-        <div class="statistics" id="statisticsContainer">
-          <div class="empty-state">
-            <p data-i18n="emptyStateNoUsage">No usage data yet.</p>
+        <!-- Statistics Section -->
+        <div class="statistics-container" id="statisticsSection">
+          <div class="statistics-header">
+            <h2 data-i18n="sectionStatistics">Usage Statistics</h2>
+          </div>
+
+          <div class="statistics" id="statisticsContainer">
+            <div class="empty-state">
+              <p data-i18n="emptyStateNoUsage">No usage data yet.</p>
+            </div>
           </div>
         </div>
       </section>

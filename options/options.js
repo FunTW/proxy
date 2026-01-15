@@ -12,11 +12,11 @@ import { initializeI18n, getMessage as t } from '../scripts/i18n.js';
  */
 
 // DOM elements
-let proxyCards, emptyState, formSection, proxyForm;
+let proxyListSidebar, emptyState, formSection, proxyForm, statisticsSection;
 let configIdField, proxyNameField, proxyTypeField, proxyHostField, proxyPortField;
 let bypassListField, pacScriptField, proxyColorField;
 let serverFields, pacScriptFieldContainer;
-let addProxyBtn, cancelFormBtn, cancelBtn, exportBtn, importBtn, importFile;
+let addProxyBtn, cancelFormBtn, cancelBtn, testBtn, deleteBtn, exportBtn, importBtn, importFile;
 let formTitle, statisticsContainer, toast, loadTemplateBtn, versionInfo;
 
 // State
@@ -24,6 +24,7 @@ let proxyConfigs = [];
 let currentStatus = null;
 let statistics = null;
 let editingConfigId = null;
+let selectedConfigId = null;
 
 /**
  * Initialize options page
@@ -33,9 +34,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   initializeI18n();
 
   // Get DOM elements
-  proxyCards = document.getElementById('proxyCards');
+  proxyListSidebar = document.getElementById('proxyListSidebar');
   emptyState = document.getElementById('emptyState');
   formSection = document.getElementById('formSection');
+  statisticsSection = document.getElementById('statisticsSection');
   proxyForm = document.getElementById('proxyForm');
   formTitle = document.getElementById('formTitle');
 
@@ -54,6 +56,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   addProxyBtn = document.getElementById('addProxyBtn');
   cancelFormBtn = document.getElementById('cancelFormBtn');
   cancelBtn = document.getElementById('cancelBtn');
+  testBtn = document.getElementById('testBtn');
+  deleteBtn = document.getElementById('deleteBtn');
   exportBtn = document.getElementById('exportBtn');
   importBtn = document.getElementById('importBtn');
   importFile = document.getElementById('importFile');
@@ -69,6 +73,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   addProxyBtn.addEventListener('click', showAddForm);
   cancelFormBtn.addEventListener('click', hideForm);
   cancelBtn.addEventListener('click', hideForm);
+  testBtn.addEventListener('click', handleTestCurrent);
+  deleteBtn.addEventListener('click', handleDeleteCurrent);
   proxyForm.addEventListener('submit', handleFormSubmit);
   proxyTypeField.addEventListener('change', handleTypeChange);
   exportBtn.addEventListener('click', handleExport);
@@ -110,7 +116,7 @@ async function loadProxyConfigs() {
 
     if (response.success) {
       proxyConfigs = response.data;
-      renderProxyCards();
+      renderProxyList();
     } else {
       showToast(t('errorFailedToLoad'), 'error');
     }
@@ -155,100 +161,100 @@ async function loadStatistics() {
 }
 
 /**
- * Render proxy cards
+ * Render proxy list in sidebar
  */
-function renderProxyCards() {
-  proxyCards.innerHTML = '';
+function renderProxyList() {
+  proxyListSidebar.innerHTML = '';
 
   if (proxyConfigs.length === 0) {
     emptyState.classList.add('visible');
+    statisticsSection.style.display = 'block';
+    formSection.style.display = 'none';
     return;
   }
 
   emptyState.classList.remove('visible');
 
   proxyConfigs.forEach(config => {
-    const card = createProxyCard(config);
-    proxyCards.appendChild(card);
+    const item = createProxyListItem(config);
+    proxyListSidebar.appendChild(item);
   });
+
+  // Show statistics by default if no config is selected
+  if (!selectedConfigId && proxyConfigs.length > 0) {
+    statisticsSection.style.display = 'block';
+    formSection.style.display = 'none';
+  }
 }
 
 /**
- * Create proxy card
+ * Create proxy list item for sidebar
  */
-function createProxyCard(config) {
-  const card = document.createElement('div');
-  card.className = 'proxy-card';
+function createProxyListItem(config) {
+  const item = document.createElement('div');
+  item.className = 'proxy-list-item';
 
   // Check if active
   const isActive = currentStatus?.isActive && currentStatus?.proxy?.id === config.id;
   if (isActive) {
-    card.classList.add('active');
+    item.classList.add('active');
   }
 
-  // Header
-  const header = document.createElement('div');
-  header.className = 'proxy-card-header';
+  // Check if selected
+  if (selectedConfigId === config.id) {
+    item.classList.add('selected');
+  }
 
+  // Color bar
   const colorBar = document.createElement('div');
-  colorBar.className = 'proxy-card-color';
+  colorBar.className = 'proxy-list-item-color';
   colorBar.style.backgroundColor = config.color;
 
+  // Info
   const info = document.createElement('div');
-  info.className = 'proxy-card-info';
+  info.className = 'proxy-list-item-info';
 
-  const title = document.createElement('div');
-  title.className = 'proxy-card-title';
-  title.textContent = config.name;
-  if (isActive) {
-    const badge = document.createElement('span');
-    badge.className = 'proxy-card-badge';
-    badge.textContent = 'ACTIVE';
-    title.appendChild(badge);
-  }
+  const name = document.createElement('div');
+  name.className = 'proxy-list-item-name';
+  name.textContent = config.name;
 
   const type = document.createElement('div');
-  type.className = 'proxy-card-type';
+  type.className = 'proxy-list-item-type';
   type.textContent = getProxyTypeDisplayName(config.type);
 
-  const address = document.createElement('div');
-  address.className = 'proxy-card-address';
-  address.textContent = formatProxyAddress(config);
-
-  info.appendChild(title);
+  info.appendChild(name);
   info.appendChild(type);
-  info.appendChild(address);
 
-  header.appendChild(colorBar);
-  header.appendChild(info);
+  item.appendChild(colorBar);
+  item.appendChild(info);
 
-  // Actions
-  const actions = document.createElement('div');
-  actions.className = 'proxy-card-actions';
+  // Active badge
+  if (isActive) {
+    const badge = document.createElement('div');
+    badge.className = 'proxy-list-item-badge';
+    badge.textContent = t('badgeActive');
+    item.appendChild(badge);
+  }
 
-  const editBtn = document.createElement('button');
-  editBtn.className = 'btn btn-secondary';
-  editBtn.textContent = t('btnEdit');
-  editBtn.addEventListener('click', () => showEditForm(config));
+  // Click handler to show detail
+  item.addEventListener('click', () => showProxyDetail(config));
 
-  const testBtn = document.createElement('button');
-  testBtn.className = 'btn btn-secondary';
-  testBtn.textContent = t('btnTest');
-  testBtn.addEventListener('click', () => handleTest(config));
+  return item;
+}
 
-  const deleteBtn = document.createElement('button');
-  deleteBtn.className = 'btn btn-danger';
-  deleteBtn.textContent = t('btnDelete');
-  deleteBtn.addEventListener('click', () => handleDelete(config));
+/**
+ * Show proxy detail in right panel
+ */
+function showProxyDetail(config) {
+  selectedConfigId = config.id;
+  renderProxyList(); // Re-render to update selection
 
-  actions.appendChild(editBtn);
-  actions.appendChild(testBtn);
-  actions.appendChild(deleteBtn);
+  // Hide statistics, show form for editing
+  statisticsSection.style.display = 'none';
+  formSection.style.display = 'block';
 
-  card.appendChild(header);
-  card.appendChild(actions);
-
-  return card;
+  // Populate form with config data
+  showEditForm(config);
 }
 
 /**
@@ -256,12 +262,23 @@ function createProxyCard(config) {
  */
 function showAddForm() {
   editingConfigId = null;
+  selectedConfigId = null;
   formTitle.textContent = t('formTitleAdd');
   proxyForm.reset();
   proxyColorField.value = '#2196F3';
   bypassListField.value = 'localhost, 127.0.0.1, <local>';
+  
+  // Hide test and delete buttons for new config
+  testBtn.style.display = 'none';
+  deleteBtn.style.display = 'none';
+  
+  // Show form, hide statistics
+  statisticsSection.style.display = 'none';
   formSection.style.display = 'block';
-  formSection.scrollIntoView({ behavior: 'smooth' });
+  
+  // Update sidebar selection
+  renderProxyList();
+  
   handleTypeChange();
 }
 
@@ -270,6 +287,7 @@ function showAddForm() {
  */
 function showEditForm(config) {
   editingConfigId = config.id;
+  selectedConfigId = config.id;
   formTitle.textContent = t('formTitleEdit');
 
   configIdField.value = config.id;
@@ -281,8 +299,14 @@ function showEditForm(config) {
   pacScriptField.value = config.pacScript || '';
   proxyColorField.value = config.color;
 
+  // Show test and delete buttons for existing config
+  testBtn.style.display = 'inline-block';
+  deleteBtn.style.display = 'inline-block';
+
+  // Show form, hide statistics
+  statisticsSection.style.display = 'none';
   formSection.style.display = 'block';
-  formSection.scrollIntoView({ behavior: 'smooth' });
+  
   handleTypeChange();
 }
 
@@ -291,8 +315,11 @@ function showEditForm(config) {
  */
 function hideForm() {
   formSection.style.display = 'none';
+  statisticsSection.style.display = 'block';
   proxyForm.reset();
   editingConfigId = null;
+  selectedConfigId = null;
+  renderProxyList(); // Update sidebar selection
 }
 
 /**
@@ -399,6 +426,30 @@ async function handleTest(config) {
 }
 
 /**
+ * Handle test current config
+ */
+async function handleTestCurrent() {
+  if (!editingConfigId) return;
+  
+  const config = proxyConfigs.find(c => c.id === editingConfigId);
+  if (config) {
+    await handleTest(config);
+  }
+}
+
+/**
+ * Handle delete current config
+ */
+async function handleDeleteCurrent() {
+  if (!editingConfigId) return;
+  
+  const config = proxyConfigs.find(c => c.id === editingConfigId);
+  if (config) {
+    await handleDelete(config);
+  }
+}
+
+/**
  * Handle delete configuration
  */
 async function handleDelete(config) {
@@ -414,6 +465,14 @@ async function handleDelete(config) {
 
     if (response.success) {
       showToast(t('msgConfigDeleted'), 'success');
+      
+      // If deleted config was selected, clear selection
+      if (selectedConfigId === config.id) {
+        selectedConfigId = null;
+        formSection.style.display = 'none';
+        statisticsSection.style.display = 'block';
+      }
+      
       await loadData();
     } else {
       showToast(response.error || t('errorFailedToDelete'), 'error');
