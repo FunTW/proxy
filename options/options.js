@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadTemplateBtn.addEventListener('click', loadPACTemplate);
     clearStatisticsBtn.addEventListener('click', handleClearStatistics);
     confirmModalCancel.addEventListener('click', hideConfirmModal);
-    
+
     confirmModalClickHandler = (e) => {
       if (e.target === confirmModal) {
         hideConfirmModal();
@@ -99,14 +99,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     storageChangeListener = handleStorageChange;
     chrome.storage.onChanged.addListener(storageChangeListener);
-    
+
     proxyListClickHandler = (e) => {
       const item = e.target.closest('.proxy-list-item');
       if (!item) return;
-      
+
       const configId = item.dataset.configId;
       if (!configId) return;
-      
+
       const config = proxyConfigs.find(c => c.id === configId);
       if (config) {
         showProxyDetail(config);
@@ -311,22 +311,23 @@ function showProxyDetail(config) {
 function showAddForm() {
   editingConfigId = null;
   selectedConfigId = null;
+
+  // Update sidebar selection first (this might reset view to statistics, so do it before showing form)
+  renderProxyList();
+
   formTitle.textContent = t('formTitleAdd');
   proxyForm.reset();
   proxyColorField.value = '#2196F3';
   bypassListField.value = 'localhost, 127.0.0.1, <local>';
-  
+
   // Hide test and delete buttons for new config
   testBtn.style.display = 'none';
   deleteBtn.style.display = 'none';
-  
+
   // Show form, hide statistics
   statisticsSection.style.display = 'none';
   formSection.style.display = 'block';
-  
-  // Update sidebar selection
-  renderProxyList();
-  
+
   handleTypeChange();
 }
 
@@ -354,7 +355,7 @@ function showEditForm(config) {
   // Show form, hide statistics
   statisticsSection.style.display = 'none';
   formSection.style.display = 'block';
-  
+
   handleTypeChange();
 }
 
@@ -478,7 +479,7 @@ async function handleTest(config) {
  */
 async function handleTestCurrent() {
   if (!editingConfigId) return;
-  
+
   const config = proxyConfigs.find(c => c.id === editingConfigId);
   if (config) {
     await handleTest(config);
@@ -490,7 +491,7 @@ async function handleTestCurrent() {
  */
 async function handleDeleteCurrent() {
   if (!editingConfigId) return;
-  
+
   const config = proxyConfigs.find(c => c.id === editingConfigId);
   if (config) {
     await handleDelete(config);
@@ -510,14 +511,14 @@ async function handleDelete(config) {
 
       if (response.success) {
         showToast(t('msgConfigDeleted'), 'success');
-        
+
         // If deleted config was selected, clear selection
         if (selectedConfigId === config.id) {
           selectedConfigId = null;
           formSection.style.display = 'none';
           statisticsSection.style.display = 'block';
         }
-        
+
         await loadData();
       } else {
         showToast(response.error || t('errorFailedToDelete'), 'error');
@@ -625,7 +626,7 @@ function renderStatistics() {
   const maxConnections = Math.max(...Object.values(statistics.byProxy).map(s => s.connections));
 
   const fragment = document.createDocumentFragment();
-  
+
   Object.entries(statistics.byProxy).forEach(([proxyId, stat]) => {
     const config = proxyConfigs.find(c => c.id === proxyId);
     const proxyName = config ? escapeHtml(config.name) : 'Unknown Proxy';
@@ -633,27 +634,27 @@ function renderStatistics() {
 
     const statItem = document.createElement('div');
     statItem.className = 'stat-item';
-    
+
     const nameDiv = document.createElement('div');
     nameDiv.className = 'stat-name';
     nameDiv.textContent = proxyName;
-    
+
     const barDiv = document.createElement('div');
     barDiv.className = 'stat-bar';
     const fillDiv = document.createElement('div');
     fillDiv.className = 'stat-bar-fill';
     fillDiv.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
     barDiv.appendChild(fillDiv);
-    
+
     const valueDiv = document.createElement('div');
     valueDiv.className = 'stat-value';
     const connections = parseInt(stat.connections) || 0;
     valueDiv.textContent = `${connections} ${t('statisticsConnections')}`;
-    
+
     statItem.appendChild(nameDiv);
     statItem.appendChild(barDiv);
     statItem.appendChild(valueDiv);
-    
+
     fragment.appendChild(statItem);
   });
 
@@ -664,18 +665,18 @@ function renderStatistics() {
 function showConfirmModal(message, onConfirm) {
   confirmModalMessage.textContent = escapeHtml(message);
   confirmModal.style.display = 'flex';
-  
+
   const handleConfirm = () => {
     hideConfirmModal();
     if (typeof onConfirm === 'function') {
       onConfirm();
     }
   };
-  
+
   if (confirmModalConfirm._currentHandler) {
     confirmModalConfirm.removeEventListener('click', confirmModalConfirm._currentHandler);
   }
-  
+
   confirmModalConfirm._currentHandler = handleConfirm;
   confirmModalConfirm.addEventListener('click', handleConfirm);
 }
